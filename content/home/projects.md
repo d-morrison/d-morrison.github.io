@@ -29,14 +29,6 @@ subtitle = ""
     name = "R"
     tag = "R"
   
-  [[content.filter_button]]
-    name = "Functional Data Analysis"
-    tag = "Functional Data Analysis"
-  
-  [[content.filter_button]]
-    name = "Knitting"
-    tag = "Knitting"
-
 [design]
   # Choose how many columns the section has. Valid values: 1 or 2.
   columns = "2"

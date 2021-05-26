@@ -26,10 +26,4 @@ subtitle = ""
   name = "Statistics"
   description = "75%"  
   
-[[feature]]
-  icon = "socks"
-  icon_pack = "fas"
-  name = "Knitting"
-  description = "65%"
-
 +++
