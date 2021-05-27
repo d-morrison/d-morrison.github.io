@@ -39,4 +39,4 @@ superuser: true
 
 I am a graduating doctoral student at UCLA, where I have been working with [Ron Brookmeyer](https://ph.ucla.edu/faculty/brookmeyer), [Tom Belin](https://ph.ucla.edu/faculty/belin), [Vivek Shetty](https://dentistry.ucla.edu/profile/shetty-vivek), and [Onyebuchi Arah](https://ph.ucla.edu/faculty/arah).
 
-I have worked on a variety of applied and theoretical statistical challenges, including problems in causal inference, data fusion, and infectious disease surveillance. As a graduate student at UCLA, I served as the Vice President of Financial Affairs [Biostatistics Student Association] (https://ucla-bsa.github.io) at UCLA.
+I have worked on a variety of applied and theoretical statistical challenges, including problems in causal inference, data fusion, and infectious disease surveillance. As a graduate student at UCLA, I served as the Vice President of Financial Affairs of the [Biostatistics Student Association](https://ucla-bsa.github.io).
