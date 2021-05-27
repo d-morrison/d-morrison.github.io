@@ -13,7 +13,7 @@
     
     
     <item>
-      <title>Publications</title>
+      <title>All Publications</title>
       <link>https://d-morrison.github.io/publication/</link>
       <pubDate>Sat, 17 Apr 2021 00:00:00 +0000</pubDate>
       
@@ -27,6 +27,15 @@
       <pubDate>Tue, 01 Jan 2019 00:00:00 +0000</pubDate>
       
       <guid>https://d-morrison.github.io/projects/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Publications</title>
+      <link>https://d-morrison.github.io/publications/</link>
+      <pubDate>Tue, 01 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://d-morrison.github.io/publications/</guid>
       <description></description>
     </item>
     

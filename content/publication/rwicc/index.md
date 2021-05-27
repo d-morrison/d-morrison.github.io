@@ -19,7 +19,7 @@ publication_types: ["2"]
 publication: "Biometrics"
 publication_short: ""
 
-abstract: ""
+abstract: "A method for generalized linear regression with interval-censored covariates is described, extending previous approaches. A scenario is considered in which an interval-censored covariate of interest is defined as a function of other variables. Instead of directly modeling the distribution of the interval-censored covariate of interest, the distributions of the variables which determine that covariate are modeled, and the distribution of the covariate of interest is inferred indirectly. This approach leads to an estimation procedure using the EM algorithm. The performance of this approach is compared with two alternative approaches, one in which the censoring interval midpoints are used as estimates of the censored covariate values, and another in which the censored values are multiply imputed using uniform distributions over the censoring intervals. A simulation framework is constructed to assess these methods’ accuracies across a range of scenarios. The proposed approach is found to have less bias than midpoint analysis and uniform imputation, at the cost of small increases in standard error."
 
 # Summary. An optional shortened abstract.
 summary: ""
