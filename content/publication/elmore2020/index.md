@@ -2,7 +2,7 @@
 # Documentation: https://sourcethemes.com/academic/docs/managing-content/
 
 title: "Excess Patient Visits for Cough and Pulmonary Disease at a Large US Health System in the Months Prior to the COVID-19 Pandemic: Time-Series Analysis"
-authors: [Joann Elmore, Pin-Chieh Wang, Kathleen Kerr, David Schriger, Douglas E. Morrison, Oliver Ron Brookmeyer, Michael A Pfeffer, Thomas H Payne, Judith S Currier]
+authors: [Joann Elmore, Pin-Chieh Wang, Kathleen Kerr, David Schriger, Douglas E. Morrison, Ron Brookmeyer, Michael A Pfeffer, Thomas H Payne, Judith S Currier]
 date: 2020-09-10
 doi: "https://doi.org/10.2196/21562"
 
@@ -17,7 +17,7 @@ publication_types: ["2"]
 
 # Publication name and optional abbreviated publication name.
 publication: "Journal of Medical Internet Research"
-publication_short: ""
+publication_short: "JMIR"
 
 abstract: "Background:
 Accurately assessing the regional activity of diseases such as COVID-19 is important in guiding public health interventions. Leveraging electronic health records (EHRs) to monitor outpatient clinical encounters may lead to the identification of emerging outbreaks.

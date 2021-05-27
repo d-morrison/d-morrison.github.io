@@ -3,11 +3,11 @@
 
 title: "Cross-Sectional HIV Incidence Estimation with Missing Biomarkers"
 authors: [Douglas Ezra Morrison, Oliver Laeyendecker, Jacob Konikoff, Ron Brookmeyer]
-date: 2018-12
+date: 2018-07-31
 doi: "https://doi.org/10.1515/scid-2017-0003"
 
 # Schedule page publish date (NOT publication's date).
-publishDate: 2019-06-22T14:27:48-07:00
+# publishDate: 2019-06-22T14:27:48-07:00
 
 # Publication type.
 # Legend: 0 = Uncategorized; 1 = Conference paper; 2 = Journal article;
