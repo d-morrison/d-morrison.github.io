@@ -41,4 +41,4 @@ I am a graduating doctoral student at UCLA, where I have been advised by [Ron Br
 
 I have worked on a variety of applied and theoretical statistical challenges, including problems in causal inference, data fusion, and infectious disease surveillance. 
 
-For the past year, I have served as the Vice President of Financial Affairs of the [Biostatistics Student Association](https://ucla-bsa.github.io).
+For the past year, I have served as the Vice President of Financial Affairs for the [UCLA Biostatistics Student Association](https://ucla-bsa.github.io).
