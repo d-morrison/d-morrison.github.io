@@ -13,7 +13,7 @@ education:
   - course: BS in Symbolic Systems
     institution: Stanford University
     year: 2009
-email: "dmorrison01@ucla.edu"
+email: "demorrison@ucdavis.edu"
 interests:
 - Causal Inference 
 - Data Fusion
@@ -21,13 +21,13 @@ interests:
 - Infectious Disease Epidemiology
 name: Douglas Ezra Morrison
 organizations:
-- name: University of California, Los Angeles
-  url: "https://biostat.ucla.edu"
-role: PhD Student
+- name: University of California, Davis
+  url: "https://health.ucdavis.edu/phs/divisions/biostats/index.html"
+role: Assistant Professor/Assistant Professor in Residence
 social:
 - icon: envelope
   icon_pack: fas
-  link: mailto:dmorrison01@ucla.edu
+  link: mailto:demorrison@ucdavis.edu
 #- icon: twitter
 #  icon_pack: fab
 #  link: https://twitter.com/demstats1
@@ -37,8 +37,4 @@ social:
 superuser: true
 ---
 
-I am a graduating doctoral student at UCLA, where I have been advised by [Ron Brookmeyer](https://ph.ucla.edu/faculty/brookmeyer), [Tom Belin](https://ph.ucla.edu/faculty/belin), [Sudipto Banerjee](https://ph.ucla.edu/faculty/banerjee), and [Onyebuchi Arah](https://ph.ucla.edu/faculty/arah).
-
-I have worked on a variety of applied and theoretical statistical challenges, including problems in causal inference, data fusion, and infectious disease surveillance. 
-
-For the past year, I have served as the Vice President of Financial Affairs for the [UCLA Biostatistics Student Association](https://ucla-bsa.github.io).
+I am an assistant professor of biostatistics in the Department of Public Health Sciences at UC Davis. I have worked on a variety of applied and theoretical statistical challenges, including problems in causal inference, data fusion, and infectious disease surveillance.
