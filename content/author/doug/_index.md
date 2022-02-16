@@ -34,6 +34,11 @@ social:
 - icon: github
   icon_pack: fab
   link: https://github.com/d-morrison
+# Link to a PDF of your resume/CV from the About widget.
+- icon: cv
+  icon_pack: ai
+  link: "files/Morrison CV 2022-02-16.pdf"
+
 superuser: true
 ---
 
