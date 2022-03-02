@@ -37,7 +37,7 @@ social:
 # Link to a PDF of your resume/CV from the About widget.
 - icon: cv
   icon_pack: ai
-  link: "files/Morrison CV 2022-02-16.pdf"
+  link: "files/CV/Morrison CV 2022-03-02.pdf"
 
 superuser: true
 ---
