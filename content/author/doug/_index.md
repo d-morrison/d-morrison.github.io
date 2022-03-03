@@ -42,4 +42,7 @@ social:
 superuser: true
 ---
 
-I am an assistant professor of biostatistics in the Department of Public Health Sciences at UC Davis. I have worked on a variety of applied and theoretical statistical challenges, including problems in causal inference, data fusion, and infectious disease surveillance.
+I am an assistant professor of biostatistics in the [Department of Public Health Sciences][link1] at [UC Davis][link2]. I have worked on a variety of applied and theoretical statistical challenges, including problems in causal inference, data fusion, and infectious disease surveillance.
+
+[link1]: https://health.ucdavis.edu/phs/divisions/biostats/index.html "UC Davis Public Health Sciences: Division of Biostatistics"
+[link2]: https://www.ucdavis.edu/ "UC Davis"
