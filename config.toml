@@ -21,7 +21,7 @@ googleAnalytics = "UA-159906151-1"
 # Enable comments by entering your Disqus shortname
 disqusShortname = "doug_morrison"
 
-publishDir = "public"
+publishDir = "docs"
 ############################
 ## Advanced options below ##
 ############################
@@ -40,7 +40,7 @@ defaultContentLanguageInSubdir = false
 paginate = 10  # Number of items per page in paginated lists.
 enableEmoji = true
 footnotereturnlinkcontents = "<sup>^</sup>"
-ignoreFiles = ["\\.ipynb$", ".ipynb_checkpoints$", "\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
+ignoreFiles = ["\\.ipynb$", ".ipynb_checkpoints$", "\\.Rmd$", "\\.Rmarkdown$", "_cache$"]
 
 [outputs]
   home = [ "HTML", "RSS", "JSON" ]
