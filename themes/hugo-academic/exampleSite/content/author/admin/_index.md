@@ -78,7 +78,7 @@ user_groups = ["Researchers", "Visitors"]
 [[social]]
   icon = "cv"
   icon_pack = "ai"
-  link = "files/CV/Morrison CV.pdf"
+  link = "files/CV/Morrison_CV.pdf"
 
 +++
 
