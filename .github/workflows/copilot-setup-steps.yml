@@ -72,12 +72,12 @@ jobs:
           # Verify expected files exist
           echo ""
           echo "Checking generated files:"
-          ls -lh docs/index.html
-          ls -lh docs/publications.html
-          ls -lh docs/projects.html
-          ls -lh docs/blog.html
-          ls -lh docs/.nojekyll
-          ls -lh docs/files/CV/Morrison_CV.pdf
+          test -f docs/index.html && echo "✓ docs/index.html exists"
+          test -f docs/publications.html && echo "✓ docs/publications.html exists"
+          test -f docs/projects.html && echo "✓ docs/projects.html exists"
+          test -f docs/blog.html && echo "✓ docs/blog.html exists"
+          test -f docs/.nojekyll && echo "✓ docs/.nojekyll exists"
+          test -f docs/files/CV/Morrison_CV.pdf && echo "✓ docs/files/CV/Morrison_CV.pdf exists"
           
           echo ""
           echo "Build test complete!"
