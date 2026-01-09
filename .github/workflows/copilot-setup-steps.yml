@@ -1,0 +1,83 @@
+# GitHub Copilot Setup Steps for d-morrison.github.io
+#
+# This workflow configures the GitHub Copilot coding agent's environment
+# by preinstalling Quarto and all required dependencies.
+#
+# See: https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/customize-the-agent-environment
+
+name: "Copilot Setup Steps"
+
+# Automatically run the setup steps when they are changed to allow for easy validation,
+# and allow manual testing through the repository's "Actions" tab
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+  pull_request:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+
+jobs:
+  # The job MUST be called `copilot-setup-steps` or it will not be picked up by Copilot.
+  copilot-setup-steps:
+    runs-on: ubuntu-latest
+    
+    # Set the permissions to the lowest permissions possible needed for your steps.
+    # Copilot will be given its own token for its operations.
+    permissions:
+      contents: read
+    
+    # Timeout after 55 minutes (max is 59 for copilot-setup-steps)
+    timeout-minutes: 55
+    
+    steps:
+      # Checkout code - Copilot will do this automatically if we don't,
+      # but we need it to verify the setup
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      # Set up Quarto - required for rendering the website
+      - name: Set up Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+      
+      # Verify Quarto environment is properly configured
+      - name: Verify development environment
+        run: |
+          echo "=== Quarto Development Environment Status ==="
+          
+          # Verify Quarto is installed and working
+          echo "Quarto version:"
+          quarto --version
+          
+          echo ""
+          echo "Quarto capabilities:"
+          quarto check
+          
+          echo ""
+          echo "=== Testing Quarto Render ==="
+          # Test that we can render the site
+          quarto render --help
+          
+          echo ""
+          echo "Development environment setup complete!"
+          
+      # Verify build script works
+      - name: Test build script
+        run: |
+          echo "=== Testing build.sh ==="
+          chmod +x build.sh
+          ./build.sh
+          
+          # Verify expected files exist
+          echo ""
+          echo "Checking generated files:"
+          ls -lh docs/index.html
+          ls -lh docs/publications.html
+          ls -lh docs/projects.html
+          ls -lh docs/blog.html
+          ls -lh docs/.nojekyll
+          ls -lh docs/files/CV/Morrison_CV.pdf
+          
+          echo ""
+          echo "Build test complete!"

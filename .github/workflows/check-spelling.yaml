@@ -1,0 +1,74 @@
+---
+name: Spellcheck
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    name: Spellcheck
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install cspell
+        run: npm install -g cspell
+
+      - name: Run spell check
+        run: |
+          # Create a basic cspell config if it doesn't exist
+          if [ ! -f .cspell.json ]; then
+            cat > .cspell.json << 'EOF'
+          {
+            "version": "0.2",
+            "language": "en",
+            "words": [
+              "Quarto",
+              "qmd",
+              "biostatistics",
+              "UCLA",
+              "UCD",
+              "UCDAVIS",
+              "biostat",
+              "biostats",
+              "Ezra",
+              "Morrison",
+              "demorrison",
+              "github",
+              "Biometrics",
+              "medRxiv",
+              "COVID",
+              "rwicc",
+              "JMIR",
+              "Laeyendecker",
+              "Brookmeyer",
+              "Nianogo",
+              "Inkelas"
+            ],
+            "ignorePaths": [
+              "node_modules/**",
+              "docs/**",
+              "_site/**",
+              ".git/**",
+              "*.lock",
+              "*.min.*",
+              "themes/**",
+              "static/**"
+            ]
+          }
+          EOF
+          fi
+          
+          # Run cspell on qmd and md files
+          cspell "*.qmd" "*.md" || echo "Spell check found issues"
