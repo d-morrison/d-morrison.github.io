@@ -11,7 +11,7 @@ project:
 
 website:
   title: "Douglas Ezra Morrison"
-  site-url: "https://d-morrison.github.io/"
+  # site-url: "https://d-morrison.github.io/" # Commented out to support PR previews in subdirectories
   description: "Personal website of Douglas Ezra Morrison, Assistant Professor of Biostatistics at UC Davis"
   
   navbar:
