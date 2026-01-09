@@ -31,16 +31,12 @@ jobs:
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
 
-      - name: Render
-        if: github.event.action != 'closed' # skip the build if the PR has been closed
-        run: |
-          quarto render
-          # Copy additional resources
-          cp .nojekyll docs/
-          mkdir -p docs/files/CV
-          cp static/files/CV/Morrison_CV.pdf docs/files/CV/
+      - name: Build site
+        if: github.event.action != 'closed'
+        run: ./build.sh
 
       - name: List files
+        if: github.event.action != 'closed'
         shell: bash
         run: |
           echo "contents of docs/:"
@@ -50,3 +46,4 @@ jobs:
         uses: rossjrw/pr-preview-action@main
         with:
           source-dir: docs/
+

@@ -19,22 +19,13 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Render and Publish
-        uses: quarto-dev/quarto-actions/publish@v2
+      - name: Build site
+        run: ./build.sh
+
+      - name: Publish to gh-pages
+        uses: peaceiris/actions-gh-pages@v3
         with:
-          target: gh-pages
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      
-      - name: Copy additional resources
-        run: |
-          git checkout gh-pages
-          cp .nojekyll docs/ || true
-          mkdir -p docs/files/CV
-          cp static/files/CV/Morrison_CV.pdf docs/files/CV/ || true
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          git add docs/.nojekyll docs/files/CV/Morrison_CV.pdf
-          git commit -m "Add additional resources" || true
-          git push
-        continue-on-error: true
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs
+          cname: d-morrison.github.io
+
