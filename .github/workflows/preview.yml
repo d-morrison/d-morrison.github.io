@@ -33,14 +33,9 @@ jobs:
 
       - name: Build site
         if: github.event.action != 'closed'
-        run: ./build.sh
-
-      - name: List files
-        if: github.event.action != 'closed'
-        shell: bash
         run: |
-          echo "contents of docs/:"
-          ls -la docs/
+          chmod +x ./build.sh
+          ./build.sh
           
       - name: Deploy PR Preview
         uses: rossjrw/pr-preview-action@main

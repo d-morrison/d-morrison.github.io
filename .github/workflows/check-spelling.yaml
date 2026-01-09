@@ -71,4 +71,4 @@ jobs:
           fi
           
           # Run cspell on qmd and md files
-          cspell "*.qmd" "*.md" || echo "Spell check found issues"
+          cspell "*.qmd" "*.md"
