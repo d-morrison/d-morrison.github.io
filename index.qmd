@@ -1,0 +1,42 @@
+---
+title: "Douglas Ezra Morrison"
+about:
+  template: jolla
+  image: static/img/photo.jpg
+  image-width: 200px
+  links:
+    - icon: envelope
+      text: Email
+      href: mailto:demorrison@ucdavis.edu
+    - icon: github
+      text: GitHub
+      href: https://github.com/d-morrison
+    - icon: file-pdf
+      text: CV
+      href: files/CV/Morrison_CV.pdf
+---
+
+## About Me
+
+I am an assistant professor of biostatistics in the [Department of Public Health Sciences](https://health.ucdavis.edu/phs/divisions/biostats/index.html "UC Davis Public Health Sciences: Division of Biostatistics") at [UC Davis](https://www.ucdavis.edu/ "UC Davis"). I have worked on a variety of applied and theoretical statistical challenges, including problems in causal inference, data fusion, and infectious disease surveillance.
+
+## Education
+
+**PhD in Biostatistics** | University of California, Los Angeles | 2021
+
+**MS in Statistics** | Stanford University | 2010
+
+**BS in Symbolic Systems** | Stanford University | 2009
+
+## Research Interests
+
+- Causal Inference
+- Data Fusion
+- Agent-Based Models
+- Infectious Disease Epidemiology
+
+## Affiliation
+
+**Assistant Professor/Assistant Professor in Residence**  
+University of California, Davis  
+[Department of Public Health Sciences](https://health.ucdavis.edu/phs/divisions/biostats/index.html)

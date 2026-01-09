@@ -1,0 +1,53 @@
+---
+title: "Publications"
+---
+
+## Journal Articles
+
+### 2021
+
+**Regression with interval-censored covariates: Application to cross-sectional incidence estimation**  
+Douglas Ezra Morrison, Oliver Laeyendecker, Ron Brookmeyer  
+*Biometrics*, 2021  
+[DOI](https://doi.org/10.1111/biom.13472) | [Code](https://github.com/d-morrison/rwicc) | [Project](https://d-morrison.github.io/rwicc)
+
+**Modeling infection dynamics and mitigation strategies to support K-6 in-person instruction during the COVID-19 pandemic**  
+Douglas Ezra Morrison, Roch Nianogo, Vladimir Manuel, Onyebuchi Arah, Nathaniel Anderson, Tony Kuo, Moira Inkelas  
+*medRxiv* (Preprint), 2021  
+[DOI](https://doi.org/10.1101/2021.02.27.21252535)
+
+### 2020
+
+**Excess Patient Visits for Cough and Pulmonary Disease at a Large US Health System in the Months Prior to the COVID-19 Pandemic: Time-Series Analysis**  
+Joann Elmore, Pin-Chieh Wang, Kathleen Kerr, David Schriger, Douglas E. Morrison, Ron Brookmeyer, Michael A Pfeffer, Thomas H Payne, Judith S Currier  
+*Journal of Medical Internet Research*, 2020  
+[DOI](https://doi.org/10.2196/21562)
+
+**A Scalable System for Passively Monitoring Oral Health Behaviors Using Electronic Toothbrushes in the Home Setting: Development and Feasibility Study**  
+Vivek Shetty, Douglas Morrison, Thomas Belin, Timothy Hnat, Santosh Kumar  
+*Journal of Medical Internet Research*, 2020  
+[DOI](https://doi.org/10.2196/17347)
+
+### 2019
+
+**Cross‐sectional HIV incidence estimation in an evolving epidemic**  
+Douglas Ezra Morrison, Oliver Laeyendecker, Ron Brookmeyer  
+*Statistics in Medicine*, 2019  
+[DOI](https://doi.org/10.1002/sim.8196)
+
+### 2018
+
+**Cross-Sectional HIV Incidence Estimation with Missing Biomarkers**  
+Douglas Ezra Morrison, Oliver Laeyendecker, Jacob Konikoff, Ron Brookmeyer  
+*Statistical Communications in Infectious Diseases*, 2018  
+[DOI](https://doi.org/10.1515/scid-2017-0003)
+
+---
+
+## Research Areas
+
+- Cross-Sectional Incidence Estimation
+- COVID-19 Modeling
+- Causal Inference
+- Data Fusion
+- Infectious Disease Epidemiology
