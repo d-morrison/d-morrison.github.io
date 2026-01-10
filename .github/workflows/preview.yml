@@ -41,3 +41,4 @@ jobs:
         uses: rossjrw/pr-preview-action@main
         with:
           source-dir: docs/
+          wait-for-pages-deployment: true
