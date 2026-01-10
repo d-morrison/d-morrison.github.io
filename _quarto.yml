@@ -1,0 +1,48 @@
+project:
+  type: website
+  output-dir: docs
+  render:
+    - "*.qmd"
+    - "!themes/"
+    - "!content/"
+    - "!archetypes/"
+    - "!config/"
+    - "!data/"
+
+website:
+  title: "Douglas Ezra Morrison"
+  # site-url: "https://d-morrison.github.io/" # Commented out to support PR previews in subdirectories
+  description: "Personal website of Douglas Ezra Morrison, Assistant Professor of Biostatistics at UC Davis"
+  
+  navbar:
+    background: primary
+    search: true
+    left:
+      - text: "Home"
+        href: index.qmd
+      - text: "Publications"
+        href: publications.qmd
+      - text: "Projects"
+        href: projects.qmd
+      - text: "Blog"
+        href: blog.qmd
+    right:
+      - icon: github
+        href: https://github.com/d-morrison
+      - icon: envelope
+        href: mailto:demorrison@ucdavis.edu
+        
+  page-footer:
+    left: "&copy; Douglas Ezra Morrison 2024"
+    right: 
+      - icon: github
+        href: https://github.com/d-morrison
+
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    toc: true
+    toc-location: right
+    code-copy: true
+    code-overflow: wrap
