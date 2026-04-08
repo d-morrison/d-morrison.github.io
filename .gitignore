@@ -13,3 +13,5 @@ Thumbs.db
 # Quarto
 /.quarto/
 /_site/
+
+**/*.quarto_ipynb
