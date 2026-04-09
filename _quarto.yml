@@ -26,6 +26,8 @@ website:
         href: projects.qmd
       - text: "Blog"
         href: blog.qmd
+      - text: "GGE QE"
+        href: gge-qe.qmd
     right:
       - icon: github
         href: https://github.com/d-morrison

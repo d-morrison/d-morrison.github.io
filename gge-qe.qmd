@@ -1,0 +1,46 @@
+---
+title: "Oral Qualifying Exam Expectations (GGE)"
+---
+
+I'm glad to meet with you; please use my bookings page to find a time to meet (I'll send the link by email).
+
+## Before We Meet
+
+Before we meet, please review your program's QE guidelines; for example, for GGE:
+
+- [GGE Qualifying Exam: Tips for Success](https://gge.vetmed.ucdavis.edu/policies#:~:text=GGE%20Qualifying%20Exam%3A%20Tips%20for%20Success)
+- "QE Prep Presentation" (get it from the EGGS representatives)
+
+## What I Will Check
+
+Basically, I'll try to check that you understand:
+
+1. the scientific questions you are trying to answer
+2. the study design and collection process that produced (or will produce) your data
+3. the structure of the resulting data set(s)
+4. what modeling assumptions your planned analyses are making
+    a. make sure you can write out the likelihood (or estimating equations if using GEE, etc.) of the data for the proposed model
+5. how to perform the analysis correctly
+6. how to interpret the results to answer the scientific question
+
+You should be prepared to demonstrate full understanding of your proposed data structure and analysis methods. Ideally, you will teach me everything I would need to know to understand and perform your analysis myself. A [doctor](https://www.etymonline.com/search?q=doctor) of philosophy is a teacher; one goal of the qualifying exam is to evaluate your teaching ability.
+
+## Written Proposal
+
+You will need to provide a formal written proposal ahead of the exam (the GGE graduate program coordinator knows the rules for how far in advance you need to provide it).
+
+- The proposal should contain complete drafts of the introduction and methods sections for each chapter of your dissertation, as well as expected results sections, ideally including mock-up tables and graphs.
+- The discussion section is mostly not possible to draft at the proposal stage (prior to completing the results), except for the limitations section, which you should include.
+- Your methods sections should include directed acyclic graphs (DAGs) or similar diagrams to illustrate the study design and data-generating process.
+- You should explicitly define your [estimands](https://d-morrison.github.io/rme/estimation.html#def-estimand).
+- You should explicitly define a set of formal mathematical notation to use to represent your variables and parameters.
+
+## During the Exam
+
+During the exam, I usually ask questions starting from wherever I get confused by your proposal and continuing until I understand what you're planning to do, how, and why. If you're only using maximum likelihood inference, I probably won't ask you questions about Bayesian inference, and vice versa, but I might ask why you chose to use ML instead of other techniques. So, you don't need to know all of Epi 202–204, just the parts that are relevant to your work.
+
+---
+
+Hope that helps! Glad to discuss more either by correspondence or in person.
+
+**The best way to reach me is through Teams. I'm months behind on email.**
