@@ -33,14 +33,17 @@ website:
     right:
       - icon: github
         href: https://github.com/d-morrison
+        aria-label: "GitHub"
       - icon: envelope
         href: mailto:demorrison@ucdavis.edu
+        aria-label: "Email"
         
   page-footer:
     left: "&copy; Douglas Ezra Morrison 2024"
-    right: 
+    right:
       - icon: github
         href: https://github.com/d-morrison
+        aria-label: "GitHub"
 
 format:
   html:

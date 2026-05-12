@@ -4,6 +4,7 @@ about:
   template: jolla
   image: static/img/photo.jpg
   image-width: 200px
+  image-alt: "Portrait of Douglas Ezra Morrison"
   links:
     - icon: envelope
       text: Email
