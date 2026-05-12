@@ -8,25 +8,13 @@ To build the website:
 
 ```bash
 sudo apt-get install -y poppler-utils  # required for eval PDF extraction
-quarto render
-```
-
-After rendering, you need to copy additional resources:
-
-```bash
-# Copy .nojekyll for GitHub Pages
-cp .nojekyll docs/
-
-# Copy CV file
-mkdir -p docs/files/CV
-cp static/files/CV/Morrison_CV.pdf docs/files/CV/
-```
-
-Or use the provided script:
-
-```bash
 ./build.sh
 ```
+
+The build script will:
+1. Extract evaluation data from PDFs (creates `data/evals_data.rds`)
+2. Render the Quarto site
+3. Copy additional resources to the `docs/` directory
 
 ## Development
 

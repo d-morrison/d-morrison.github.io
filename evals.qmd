@@ -12,9 +12,16 @@ title: "Teaching Evaluations"
 library(ggplot2)
 library(dplyr)
 
-# Extract evaluation data from the linked PDF summaries
-source("data/extract_evals.R")
-evals <- extract_evals_data()
+# Load evaluation data from RDS file
+# If RDS doesn't exist, generate it from PDFs
+rds_path <- "data/evals_data.rds"
+if (!file.exists(rds_path)) {
+  source("data/extract_evals.R")
+  evals <- extract_evals_data()
+  saveRDS(evals, rds_path)
+} else {
+  evals <- readRDS(rds_path)
+}
 
 # Convert year to factor for proper ordering
 evals$year <- as.factor(evals$year)
@@ -38,7 +45,7 @@ ggplot(evals, aes(x = year, y = overall_rating, group = 1)) +
   )
 ```
 
-The plots below are generated directly from the linked PDF evaluation summaries at render time. UCLA's 9-point teaching assistant scores are linearly rescaled to the 5-point UC Davis scale so they can be shown on the same axis.
+The plots below are generated from evaluation data extracted from the linked PDF summaries. UCLA's 9-point teaching assistant scores are linearly rescaled to the 5-point UC Davis scale so they can be shown on the same axis.
 
 ```{r}
 #| echo: false
