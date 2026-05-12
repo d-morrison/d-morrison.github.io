@@ -4,7 +4,7 @@ title: "Teaching"
 
 ## Courses
 
-### Epi 204: Regression Models for Epidemiology
+### Epi 204: Quantitative Epidemiology III: Statistical Models
 
 Lecture notes and materials for Epi 204 are available on GitHub:
 
