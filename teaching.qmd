@@ -4,7 +4,7 @@ title: "Teaching"
 
 ## Courses
 
-### Epi 204: Regression Methods in Epidemiology
+### Epi 204: Regression Models for Epidemiology
 
 Lecture notes and materials for Epi 204 are available on GitHub:
 
