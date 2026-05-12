@@ -28,6 +28,8 @@ website:
         href: blog.qmd
       - text: "Teaching Evaluations"
         href: evals.qmd
+      - text: "GGE QE"
+        href: gge-qe.qmd
     right:
       - icon: github
         href: https://github.com/d-morrison
