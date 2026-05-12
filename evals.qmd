@@ -2,6 +2,83 @@
 title: "Teaching Evaluations"
 ---
 
+## Evaluation Trends Over Time
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+library(ggplot2)
+library(dplyr)
+
+# Read evaluation data
+evals <- read.csv("data/evals_data.csv")
+
+# Convert year to factor for proper ordering
+evals$year <- as.factor(evals$year)
+
+# Create a plot of overall ratings over time
+ggplot(evals, aes(x = year, y = overall_rating, group = 1)) +
+  geom_line(color = "#2780E3", size = 1.2) +
+  geom_point(color = "#2780E3", size = 3) +
+  ylim(4.0, 5.0) +
+  labs(
+    title = "Overall Teaching Rating Over Time",
+    x = "Year",
+    y = "Overall Rating (out of 5)",
+    caption = "Data from UC Davis and UCLA teaching evaluations"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    axis.title = element_text(size = 12),
+    axis.text = element_text(size = 10)
+  )
+```
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+# Create a plot comparing different metrics
+evals_long <- evals %>%
+  select(year, overall_rating, instructor_effectiveness, course_organization) %>%
+  tidyr::pivot_longer(
+    cols = c(overall_rating, instructor_effectiveness, course_organization),
+    names_to = "metric",
+    values_to = "rating"
+  )
+
+# Clean up metric names for display
+evals_long$metric <- factor(
+  evals_long$metric,
+  levels = c("overall_rating", "instructor_effectiveness", "course_organization"),
+  labels = c("Overall Rating", "Instructor Effectiveness", "Course Organization")
+)
+
+ggplot(evals_long, aes(x = year, y = rating, color = metric, group = metric)) +
+  geom_line(size = 1.2) +
+  geom_point(size = 3) +
+  ylim(4.0, 5.0) +
+  labs(
+    title = "Teaching Evaluation Metrics Over Time",
+    x = "Year",
+    y = "Rating (out of 5)",
+    color = "Metric",
+    caption = "Data from UC Davis and UCLA teaching evaluations"
+  ) +
+  scale_color_manual(values = c("#2780E3", "#28A745", "#FFC107")) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    axis.title = element_text(size = 12),
+    axis.text = element_text(size = 10),
+    legend.position = "bottom"
+  )
+```
+
 ## UC Davis (Instructor of Record)
 
 ### Epi 204
