@@ -12,8 +12,9 @@ title: "Teaching Evaluations"
 library(ggplot2)
 library(dplyr)
 
-# Read evaluation data
-evals <- read.csv("data/evals_data.csv")
+# Extract evaluation data from the linked PDF summaries
+source("data/extract_evals.R")
+evals <- extract_evals_data()
 
 # Convert year to factor for proper ordering
 evals$year <- as.factor(evals$year)
@@ -36,6 +37,8 @@ ggplot(evals, aes(x = year, y = overall_rating, group = 1)) +
     axis.text = element_text(size = 10)
   )
 ```
+
+The plots below are generated directly from the linked PDF evaluation summaries at render time. UCLA's 9-point teaching assistant scores are linearly rescaled to the 5-point UC Davis scale so they can be shown on the same axis.
 
 ```{r}
 #| echo: false
@@ -61,7 +64,7 @@ evals_long$metric <- factor(
 ggplot(evals_long, aes(x = year, y = rating, color = metric, group = metric)) +
   geom_line(size = 1.2) +
   geom_point(size = 3) +
-  ylim(4.0, 5.0) +
+  coord_cartesian(ylim = c(3.5, 5.0)) +
   labs(
     title = "Teaching Evaluation Metrics Over Time",
     x = "Year",

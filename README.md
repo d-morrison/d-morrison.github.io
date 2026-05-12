@@ -7,6 +7,7 @@ This is the source repository for my personal academic website, built with [Quar
 To build the website:
 
 ```bash
+sudo apt-get install -y poppler-utils  # required for eval PDF extraction
 quarto render
 ```
 
