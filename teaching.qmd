@@ -1,0 +1,21 @@
+---
+title: "Teaching"
+---
+
+## Courses
+
+### Epi 204: Quantitative Epidemiology III: Statistical Models
+
+Lecture notes and materials for Epi 204 are available on GitHub:
+
+- [Epi 204 Lecture Notes Repository](https://github.com/d-morrison/rme)
+
+[View Teaching Evaluations](evals.qmd)
+
+## Presentations
+
+### Introduction to Causal Inference
+
+Douglas Ezra Morrison, Ph.D. – January 19, 2022
+
+<a href="https://health.ucdavis.edu/media-resources/ctsc/documents/pdfs/causal-inference-intro-2022.pdf">Presentation PDF</a> | <a href="https://ucdhs.hosted.panopto.com/Panopto/Pages/Viewer.aspx?id=43e9eb6f-3ed9-41ac-8ad9-ae22016572c8">Video</a> (42:18)
