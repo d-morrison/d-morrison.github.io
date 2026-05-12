@@ -26,8 +26,8 @@ website:
         href: projects.qmd
       - text: "Blog"
         href: blog.qmd
-      - text: "Teaching Evaluations"
-        href: evals.qmd
+      - text: "Teaching"
+        href: teaching.qmd
       - text: "GGE QE"
         href: gge-qe.qmd
     right:
