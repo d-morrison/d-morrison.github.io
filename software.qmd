@@ -1,0 +1,226 @@
+---
+title: "Software"
+---
+
+## R Packages on CRAN
+
+### serocalculator
+
+Translates antibody levels from cross-sectional population samples into estimates of seroconversion rates and frequencies.
+
+- [CRAN](https://cran.r-project.org/package=serocalculator)
+- [GitHub Repository](https://github.com/UCD-SERG/serocalculator)
+- [Package Documentation](https://ucd-serg.github.io/serocalculator/)
+
+### rwicc *(archived)*
+
+Regression with interval-censored covariates: Application to cross-sectional incidence estimation.
+
+- [CRAN Archive](https://CRAN.R-project.org/src/contrib/Archive/rwicc)
+- [GitHub Repository](https://github.com/d-morrison/rwicc)
+- [Package Documentation](https://d-morrison.github.io/rwicc/)
+- [Publication](https://doi.org/10.1111/biom.13472)
+
+---
+
+## My Repositories
+
+Repositories under my personal GitHub account and the [UCD-SERG](https://github.com/UCD-SERG) organization, ordered by recency of contributions.
+
+### rme
+
+Regression Models for Epidemiology — an open Quarto textbook.
+
+- [GitHub Repository](https://github.com/d-morrison/rme)
+
+### UCD-SERG/serocalculator
+
+See [CRAN Packages](#r-packages-on-cran) above.
+
+### rmb
+
+Data sets from *Regression Methods in Biostatistics* (Vittinghoff et al.).
+
+- [GitHub Repository](https://github.com/d-morrison/rmb)
+
+### qwt
+
+A template for building websites with Quarto.
+
+- [GitHub Repository](https://github.com/d-morrison/qwt)
+
+### macros
+
+Shared macro definitions for Quarto documents.
+
+- [GitHub Repository](https://github.com/d-morrison/macros)
+
+### snapr
+
+Convenient snapshot testing functions for R packages.
+
+- [GitHub Repository](https://github.com/d-morrison/snapr)
+
+### slidebreak
+
+`slidebreak` shortcode extension for Quarto — insert slide breaks into Quarto revealjs presentations.
+
+- [GitHub Repository](https://github.com/d-morrison/slidebreak)
+
+### revealjs-html-links
+
+Quarto extension enabling HTML-style links in revealjs presentations.
+
+- [GitHub Repository](https://github.com/d-morrison/revealjs-html-links)
+
+### div-anchors
+
+Anchors for theorem-variant divs in Quarto.
+
+- [GitHub Repository](https://github.com/d-morrison/div-anchors)
+
+### equation-anchors
+
+Quarto extension for adding anchors to numbered equations.
+
+- [GitHub Repository](https://github.com/d-morrison/equation-anchors)
+
+### qet
+
+Quarto extension template.
+
+- [GitHub Repository](https://github.com/d-morrison/qet)
+
+### pr.helpers
+
+Generalization of pull-request helper functions from `{usethis}`.
+
+- [GitHub Repository](https://github.com/d-morrison/pr.helpers)
+
+### github-stats
+
+Tools for computing personal GitHub contribution statistics.
+
+- [GitHub Repository](https://github.com/d-morrison/github-stats)
+
+### shiny.demos
+
+Teaching demos for Shiny applications.
+
+- [GitHub Repository](https://github.com/d-morrison/shiny.demos)
+
+### ping
+
+Graph ping data in R.
+
+- [GitHub Repository](https://github.com/d-morrison/ping)
+
+### EM.examples
+
+Examples of EM algorithms.
+
+- [GitHub Repository](https://github.com/d-morrison/EM.examples)
+
+### binom.se
+
+Sample size calculations for Bernoulli probability estimation.
+
+- [GitHub Repository](https://github.com/d-morrison/binom.se)
+
+### vax.eff
+
+Code from "Estimating Vaccine Effectiveness from Linking Population-Based Health Registries" (Brookmeyer & Morrison, *American Journal of Epidemiology*, 2022).
+
+- [GitHub Repository](https://github.com/d-morrison/vax.eff)
+
+### CSICalc
+
+Methods for estimating incidence from cross-sectional biomarker surveys.
+
+- [GitHub Repository](https://github.com/d-morrison/CSICalc)
+
+### LA.Vax.Data
+
+Pre-processes LA County vaccination rates by community statistical area.
+
+- [GitHub Repository](https://github.com/d-morrison/LA.Vax.Data)
+
+### hybrid.charts.la
+
+Adaptation of Wisconsin COVID-19 data visualization code for Los Angeles County.
+
+- [GitHub Repository](https://github.com/d-morrison/hybrid.charts.la)
+
+### UCD-SERG/shiny_serocalculator
+
+Shiny app for the `serocalculator` package.
+
+- [GitHub Repository](https://github.com/UCD-SERG/shiny_serocalculator)
+
+### UCD-SERG/shiny_decay_curve
+
+Shiny app to display antibody decay curves.
+
+- [GitHub Repository](https://github.com/UCD-SERG/shiny_decay_curve)
+
+### UCD-SERG/SSudanTyphoidSeroIncidence
+
+Analysis of seroincidence of enteric fever in Juba, South Sudan.
+
+- [GitHub Repository](https://github.com/UCD-SERG/SSudanTyphoidSeroIncidence)
+
+---
+
+## External Contributions
+
+Contributions I have made to repositories outside my own accounts, ordered by recency.
+
+### ucdavis/rSuStaIn
+
+R implementation of the SuStaIn (Subtype and Stage Inference) algorithm.
+
+- [GitHub Repository](https://github.com/ucdavis/rSuStaIn)
+- [Contributions](https://github.com/ucdavis/rSuStaIn/pulls?q=is%3Apr+author%3Ad-morrison)
+
+### etiennebacher/altdoc
+
+R package for building documentation websites as an alternative to `{pkgdown}`.
+
+- [GitHub Repository](https://github.com/etiennebacher/altdoc)
+- [Contributions](https://github.com/etiennebacher/altdoc/pulls?q=is%3Apr+author%3Ad-morrison)
+
+### ucdavis/win
+
+UC Davis WIN (Workforce Inequity in Neuroscience) project.
+
+- [GitHub Repository](https://github.com/ucdavis/win)
+- [Contributions](https://github.com/ucdavis/win/pulls?q=is%3Apr+author%3Ad-morrison)
+
+### ucdavis/serodynamics
+
+Serodynamics modeling for infectious disease epidemiology.
+
+- [GitHub Repository](https://github.com/ucdavis/serodynamics)
+- [Contributions](https://github.com/ucdavis/serodynamics/pulls?q=is%3Apr+author%3Ad-morrison)
+
+### ucdavis/ettbc
+
+Analysis code for enteric disease burden estimation.
+
+- [GitHub Repository](https://github.com/ucdavis/ettbc)
+- [Contributions](https://github.com/ucdavis/ettbc/pulls?q=is%3Apr+author%3Ad-morrison)
+
+### UCLA-PHP/school.epi.abm
+
+Agent-based model of infection dynamics in K-6 schools during the COVID-19 pandemic.
+
+- [GitHub Repository](https://github.com/UCLA-PHP/school.epi.abm)
+- [Contributions](https://github.com/UCLA-PHP/school.epi.abm/pulls?q=is%3Apr+author%3Ad-morrison)
+- [Publication](https://doi.org/10.1101/2021.02.27.21252535)
+
+### sun123zxy/quarto-callouty-theorem
+
+Quarto extension for callout-style theorem environments.
+
+- [GitHub Repository](https://github.com/sun123zxy/quarto-callouty-theorem)
+- [Contributions](https://github.com/sun123zxy/quarto-callouty-theorem/pulls?q=is%3Apr+author%3Ad-morrison)
