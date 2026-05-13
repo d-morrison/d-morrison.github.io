@@ -1,16 +1,21 @@
 read_pdf_text <- function(path) {
+  text_path <- tempfile(fileext = ".txt")
+  on.exit(unlink(text_path), add = TRUE)
+
   output <- system2(
     "pdftotext",
-    c("-layout", normalizePath(path, mustWork = TRUE), "-"),
-    stdout = TRUE
+    c(
+      "-layout",
+      shQuote(normalizePath(path, mustWork = TRUE)),
+      shQuote(text_path)
+    )
   )
 
-  status <- attr(output, "status")
-  if (!is.null(status) && status != 0) {
+  if (!identical(output, 0L)) {
     stop(sprintf("pdftotext failed for %s", path))
   }
 
-  paste(output, collapse = "\n")
+  paste(readLines(text_path, warn = FALSE), collapse = "\n")
 }
 
 extract_first_match <- function(text, pattern, label) {
