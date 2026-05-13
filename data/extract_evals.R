@@ -1,7 +1,7 @@
 read_pdf_text <- function(path) {
   output <- system2(
     "pdftotext",
-    c("-layout", shQuote(normalizePath(path, mustWork = TRUE)), "-"),
+    c("-layout", normalizePath(path, mustWork = TRUE), "-"),
     stdout = TRUE
   )
 

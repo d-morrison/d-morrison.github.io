@@ -3,13 +3,14 @@
 
 set -e
 
-# Extract evaluation data from PDFs if Rscript is available
-if command -v Rscript &> /dev/null; then
-  echo "Extracting evaluation data from PDFs..."
-  Rscript data/build_evals_data.R
-else
-  echo "Rscript not found, skipping pre-extraction (will extract during render if needed)"
+# Extract evaluation data from PDFs before rendering
+if ! command -v Rscript &> /dev/null; then
+  echo "Rscript is required to build this site because Quarto renders R code in evals.qmd." >&2
+  exit 1
 fi
+
+echo "Extracting evaluation data from PDFs..."
+Rscript data/build_evals_data.R
 
 echo "Rendering Quarto website..."
 quarto render
