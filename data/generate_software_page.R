@@ -24,8 +24,8 @@ output_file <- "software.qmd"
 # Build the GitHub PR search URL for a repo + state
 pr_search_url <- function(repo, state, user) {
   sprintf(
-    "https://github.com/%s/pulls?q=is%%3Apr+is%%3A%s+involves%%3A%s",
-    repo, state, user
+    "https://github.com/%s/pulls?q=is%%3Apr+is%%3A%s+(author%%3A%s+OR+assignee%%3A%s)",
+    repo, state, user, user
   )
 }
 
@@ -104,7 +104,7 @@ make_external_table <- function(repos, user) {
 # ---- GitHub API (via gh CLI) ----
 
 fetch_count <- function(repo, state, user) {
-  query <- sprintf("repo:%s is:pr is:%s involves:%s", repo, state, user)
+  query <- sprintf("repo:%s is:pr is:%s (author:%s OR assignee:%s)", repo, state, user, user)
   url   <- sprintf(
     "search/issues?q=%s&per_page=1",
     utils::URLencode(query, reserved = TRUE)
