@@ -24,7 +24,7 @@ output_file <- "software.qmd"
 # Build the GitHub PR search URL for a repo + state
 pr_search_url <- function(repo, state, user) {
   sprintf(
-    "https://github.com/%s/pulls?q=is%%3Apr+is%%3A%s+(author%%3A%s+OR+assignee%%3A%s)",
+    "https://github.com/%s/pulls?q=is%%3Apr+is%%3A%s+%%28author%%3A%s+OR+assignee%%3A%s%%29",
     repo, state, user, user
   )
 }
