@@ -28,6 +28,8 @@ website:
         href: blog.qmd
       - text: "Teaching"
         href: teaching.qmd
+      - text: "CV"
+        href: files/CV/Morrison_CV.pdf
       - text: "GGE QE"
         href: gge-qe.qmd
     right:
