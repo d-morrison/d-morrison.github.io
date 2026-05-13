@@ -4,223 +4,90 @@ title: "Software"
 
 ## R Packages on CRAN
 
-### serocalculator
-
-Translates antibody levels from cross-sectional population samples into estimates of seroconversion rates and frequencies.
-
-- [CRAN](https://cran.r-project.org/package=serocalculator)
-- [GitHub Repository](https://github.com/UCD-SERG/serocalculator)
-- [Package Documentation](https://ucd-serg.github.io/serocalculator/)
-
-### rwicc *(archived)*
-
-Regression with interval-censored covariates: Application to cross-sectional incidence estimation.
-
-- [CRAN Archive](https://CRAN.R-project.org/src/contrib/Archive/rwicc)
-- [GitHub Repository](https://github.com/d-morrison/rwicc)
-- [Package Documentation](https://d-morrison.github.io/rwicc/)
-- [Publication](https://doi.org/10.1111/biom.13472)
+| Package | Status | Description | CRAN | GitHub | Docs | Publication |
+|---------|--------|-------------|------|--------|------|-------------|
+| serocalculator | Active | Estimate seroconversion rates and frequencies from antibody levels in cross-sectional samples | [CRAN](https://cran.r-project.org/package=serocalculator) | [GitHub](https://github.com/UCD-SERG/serocalculator) | [Docs](https://ucd-serg.github.io/serocalculator/) | |
+| rwicc | Archived | Regression with interval-censored covariates | [CRAN Archive](https://CRAN.R-project.org/src/contrib/Archive/rwicc) | [GitHub](https://github.com/d-morrison/rwicc) | [Docs](https://d-morrison.github.io/rwicc/) | [DOI](https://doi.org/10.1111/biom.13472) |
 
 ---
 
 ## My Repositories
 
-Repositories under my personal GitHub account and the [UCD-SERG](https://github.com/UCD-SERG) organization, ordered by recency of contributions.
-
-### rme
-
-Regression Models for Epidemiology — an open Quarto textbook.
-
-- [GitHub Repository](https://github.com/d-morrison/rme)
-
-### UCD-SERG/serocalculator
-
-See [CRAN Packages](#r-packages-on-cran) above.
-
-### rmb
-
-Data sets from *Regression Methods in Biostatistics* (Vittinghoff et al.).
-
-- [GitHub Repository](https://github.com/d-morrison/rmb)
-
-### qwt
-
-A template for building websites with Quarto.
-
-- [GitHub Repository](https://github.com/d-morrison/qwt)
-
-### macros
-
-Shared macro definitions for Quarto documents.
-
-- [GitHub Repository](https://github.com/d-morrison/macros)
-
-### snapr
-
-Convenient snapshot testing functions for R packages.
-
-- [GitHub Repository](https://github.com/d-morrison/snapr)
-
-### slidebreak
-
-`slidebreak` shortcode extension for Quarto — insert slide breaks into Quarto revealjs presentations.
-
-- [GitHub Repository](https://github.com/d-morrison/slidebreak)
-
-### revealjs-html-links
-
-Quarto extension enabling HTML-style links in revealjs presentations.
-
-- [GitHub Repository](https://github.com/d-morrison/revealjs-html-links)
-
-### div-anchors
-
-Anchors for theorem-variant divs in Quarto.
-
-- [GitHub Repository](https://github.com/d-morrison/div-anchors)
-
-### equation-anchors
-
-Quarto extension for adding anchors to numbered equations.
-
-- [GitHub Repository](https://github.com/d-morrison/equation-anchors)
-
-### qet
-
-Quarto extension template.
-
-- [GitHub Repository](https://github.com/d-morrison/qet)
-
-### pr.helpers
-
-Generalization of pull-request helper functions from `{usethis}`.
-
-- [GitHub Repository](https://github.com/d-morrison/pr.helpers)
-
-### github-stats
-
-Tools for computing personal GitHub contribution statistics.
-
-- [GitHub Repository](https://github.com/d-morrison/github-stats)
-
-### shiny.demos
-
-Teaching demos for Shiny applications.
-
-- [GitHub Repository](https://github.com/d-morrison/shiny.demos)
-
-### ping
-
-Graph ping data in R.
-
-- [GitHub Repository](https://github.com/d-morrison/ping)
-
-### EM.examples
-
-Examples of EM algorithms.
-
-- [GitHub Repository](https://github.com/d-morrison/EM.examples)
-
-### binom.se
-
-Sample size calculations for Bernoulli probability estimation.
-
-- [GitHub Repository](https://github.com/d-morrison/binom.se)
-
-### vax.eff
-
-Code from "Estimating Vaccine Effectiveness from Linking Population-Based Health Registries" (Brookmeyer & Morrison, *American Journal of Epidemiology*, 2022).
-
-- [GitHub Repository](https://github.com/d-morrison/vax.eff)
-
-### CSICalc
-
-Methods for estimating incidence from cross-sectional biomarker surveys.
-
-- [GitHub Repository](https://github.com/d-morrison/CSICalc)
-
-### LA.Vax.Data
-
-Pre-processes LA County vaccination rates by community statistical area.
-
-- [GitHub Repository](https://github.com/d-morrison/LA.Vax.Data)
-
-### hybrid.charts.la
-
-Adaptation of Wisconsin COVID-19 data visualization code for Los Angeles County.
-
-- [GitHub Repository](https://github.com/d-morrison/hybrid.charts.la)
-
-### UCD-SERG/shiny_serocalculator
-
-Shiny app for the `serocalculator` package.
-
-- [GitHub Repository](https://github.com/UCD-SERG/shiny_serocalculator)
-
-### UCD-SERG/shiny_decay_curve
-
-Shiny app to display antibody decay curves.
-
-- [GitHub Repository](https://github.com/UCD-SERG/shiny_decay_curve)
-
-### UCD-SERG/SSudanTyphoidSeroIncidence
-
-Analysis of seroincidence of enteric fever in Juba, South Sudan.
-
-- [GitHub Repository](https://github.com/UCD-SERG/SSudanTyphoidSeroIncidence)
+Repositories under my personal GitHub account and the [UCD-SERG](https://github.com/UCD-SERG) organization.
+
+### R Packages
+
+| Package | Description | GitHub |
+|---------|-------------|--------|
+| rmb | Data sets from *Regression Methods in Biostatistics* (Vittinghoff et al.) | [GitHub](https://github.com/d-morrison/rmb) |
+| snapr | Convenient snapshot testing functions for R packages | [GitHub](https://github.com/d-morrison/snapr) |
+| pr.helpers | Generalization of pull-request helper functions from `{usethis}` | [GitHub](https://github.com/d-morrison/pr.helpers) |
+| binom.se | Sample size calculations for Bernoulli probability estimation | [GitHub](https://github.com/d-morrison/binom.se) |
+| CSICalc | Methods for estimating incidence from cross-sectional biomarker surveys | [GitHub](https://github.com/d-morrison/CSICalc) |
+| ping | Graph ping data in R | [GitHub](https://github.com/d-morrison/ping) |
+
+### Quarto Extensions
+
+| Extension | Description | GitHub |
+|-----------|-------------|--------|
+| slidebreak | Insert slide breaks into Quarto revealjs presentations | [GitHub](https://github.com/d-morrison/slidebreak) |
+| revealjs-html-links | Enable HTML-style links in revealjs presentations | [GitHub](https://github.com/d-morrison/revealjs-html-links) |
+| div-anchors | Anchors for theorem-variant divs in Quarto | [GitHub](https://github.com/d-morrison/div-anchors) |
+| equation-anchors | Anchors for numbered equations in Quarto | [GitHub](https://github.com/d-morrison/equation-anchors) |
+| qet | Quarto extension template | [GitHub](https://github.com/d-morrison/qet) |
+| macros | Shared macro definitions for Quarto documents | [GitHub](https://github.com/d-morrison/macros) |
+
+### Quarto Books & Templates
+
+| Project | Description | GitHub |
+|---------|-------------|--------|
+| rme | *Regression Models for Epidemiology* — an open Quarto textbook | [GitHub](https://github.com/d-morrison/rme) |
+| qwt | Template for building websites with Quarto | [GitHub](https://github.com/d-morrison/qwt) |
+
+### Shiny Applications
+
+| App | Description | GitHub |
+|-----|-------------|--------|
+| shiny.demos | Teaching demos for Shiny applications | [GitHub](https://github.com/d-morrison/shiny.demos) |
+| UCD-SERG/shiny_serocalculator | Shiny app for the `serocalculator` package | [GitHub](https://github.com/UCD-SERG/shiny_serocalculator) |
+| UCD-SERG/shiny_decay_curve | Shiny app to display antibody decay curves | [GitHub](https://github.com/UCD-SERG/shiny_decay_curve) |
+
+### Analysis & Research Code
+
+| Repo | Description | GitHub |
+|------|-------------|--------|
+| vax.eff | Code from "Estimating Vaccine Effectiveness from Linking Population-Based Health Registries" (Brookmeyer & Morrison, *AJE*, 2022) | [GitHub](https://github.com/d-morrison/vax.eff) |
+| LA.Vax.Data | Pre-processes LA County vaccination rates by community statistical area | [GitHub](https://github.com/d-morrison/LA.Vax.Data) |
+| hybrid.charts.la | Adaptation of Wisconsin COVID-19 data visualizations for Los Angeles County | [GitHub](https://github.com/d-morrison/hybrid.charts.la) |
+| UCD-SERG/SSudanTyphoidSeroIncidence | Analysis of seroincidence of enteric fever in Juba, South Sudan | [GitHub](https://github.com/UCD-SERG/SSudanTyphoidSeroIncidence) |
+| EM.examples | Examples of EM algorithms | [GitHub](https://github.com/d-morrison/EM.examples) |
+| github-stats | Tools for computing personal GitHub contribution statistics | [GitHub](https://github.com/d-morrison/github-stats) |
 
 ---
 
 ## External Contributions
 
-Contributions I have made to repositories outside my own accounts, ordered by recency.
+Merged pull requests I have made to repositories outside my own accounts, ordered by recency.
 
-### ucdavis/rSuStaIn
-
-R implementation of the SuStaIn (Subtype and Stage Inference) algorithm.
-
-- [GitHub Repository](https://github.com/ucdavis/rSuStaIn)
-- [Contributions](https://github.com/ucdavis/rSuStaIn/pulls?q=is%3Apr+author%3Ad-morrison)
-
-### etiennebacher/altdoc
-
-R package for building documentation websites as an alternative to `{pkgdown}`.
-
-- [GitHub Repository](https://github.com/etiennebacher/altdoc)
-- [Contributions](https://github.com/etiennebacher/altdoc/pulls?q=is%3Apr+author%3Ad-morrison)
-
-### ucdavis/win
-
-UC Davis WIN (Workforce Inequity in Neuroscience) project.
-
-- [GitHub Repository](https://github.com/ucdavis/win)
-- [Contributions](https://github.com/ucdavis/win/pulls?q=is%3Apr+author%3Ad-morrison)
-
-### ucdavis/serodynamics
-
-Serodynamics modeling for infectious disease epidemiology.
-
-- [GitHub Repository](https://github.com/ucdavis/serodynamics)
-- [Contributions](https://github.com/ucdavis/serodynamics/pulls?q=is%3Apr+author%3Ad-morrison)
-
-### ucdavis/ettbc
-
-Analysis code for enteric disease burden estimation.
-
-- [GitHub Repository](https://github.com/ucdavis/ettbc)
-- [Contributions](https://github.com/ucdavis/ettbc/pulls?q=is%3Apr+author%3Ad-morrison)
-
-### UCLA-PHP/school.epi.abm
-
-Agent-based model of infection dynamics in K-6 schools during the COVID-19 pandemic.
-
-- [GitHub Repository](https://github.com/UCLA-PHP/school.epi.abm)
-- [Contributions](https://github.com/UCLA-PHP/school.epi.abm/pulls?q=is%3Apr+author%3Ad-morrison)
-- [Publication](https://doi.org/10.1101/2021.02.27.21252535)
-
-### sun123zxy/quarto-callouty-theorem
-
-Quarto extension for callout-style theorem environments.
-
-- [GitHub Repository](https://github.com/sun123zxy/quarto-callouty-theorem)
-- [Contributions](https://github.com/sun123zxy/quarto-callouty-theorem/pulls?q=is%3Apr+author%3Ad-morrison)
+| Repository | Description | Merged PRs |
+|------------|-------------|------------|
+| [ucdavis/rSuStaIn](https://github.com/ucdavis/rSuStaIn) | R implementation of the SuStaIn (Subtype and Stage Inference) algorithm | [PRs](https://github.com/ucdavis/rSuStaIn/pulls?q=is%3Apr+is%3Amerged+author%3Ad-morrison) |
+| [ucdavis/win](https://github.com/ucdavis/win) | UC Davis WIN (Workforce Inequity in Neuroscience) project | [PRs](https://github.com/ucdavis/win/pulls?q=is%3Apr+is%3Amerged+author%3Ad-morrison) |
+| [ucdavis/ettbc](https://github.com/ucdavis/ettbc) | Enteric disease burden estimation | [PRs](https://github.com/ucdavis/ettbc/pulls?q=is%3Apr+is%3Amerged+author%3Ad-morrison) |
+| [sun123zxy/quarto-callouty-theorem](https://github.com/sun123zxy/quarto-callouty-theorem) | Quarto extension for callout-style theorem environments | [PRs](https://github.com/sun123zxy/quarto-callouty-theorem/pulls?q=is%3Apr+is%3Amerged+author%3Ad-morrison) |
+| [UCLA-PHP/school.epi.abm](https://github.com/UCLA-PHP/school.epi.abm) | Agent-based model of infection dynamics in K-6 schools during COVID-19 | [PRs](https://github.com/UCLA-PHP/school.epi.abm/pulls?q=is%3Apr+is%3Amerged+author%3Ad-morrison) |
+| [CHOP-CGTInformatics/REDCapTidieR](https://github.com/CHOP-CGTInformatics/REDCapTidieR) | R package for tidying REDCap exports | [PRs](https://github.com/CHOP-CGTInformatics/REDCapTidieR/pulls?q=is%3Apr+is%3Amerged+author%3Ad-morrison) |
+| [Nowosad/colorblindcheck](https://github.com/Nowosad/colorblindcheck) | R package for checking colorblind accessibility of color palettes | [PRs](https://github.com/Nowosad/colorblindcheck/pulls?q=is%3Apr+is%3Amerged+author%3Ad-morrison) |
+| [r-quantities/units](https://github.com/r-quantities/units) | Measurement units for R vectors | [PRs](https://github.com/r-quantities/units/pulls?q=is%3Apr+is%3Amerged+author%3Ad-morrison) |
+| [r-lib/scales](https://github.com/r-lib/scales) | Scale functions for ggplot2 | [PRs](https://github.com/r-lib/scales/pulls?q=is%3Apr+is%3Amerged+author%3Ad-morrison) |
+| [UCD-IDDRC/fxtas](https://github.com/UCD-IDDRC/fxtas) | Analysis code for Fragile X-associated tremor/ataxia syndrome | [PRs](https://github.com/UCD-IDDRC/fxtas/pulls?q=is%3Apr+is%3Amerged+author%3Ad-morrison) |
+| [ucdavis/serodynamics](https://github.com/ucdavis/serodynamics) | Bayesian modeling of antibody dynamics for seroepidemiology | [PRs](https://github.com/ucdavis/serodynamics/pulls?q=is%3Apr+is%3Amerged+author%3Ad-morrison) |
+| [hadley/mastering-shiny](https://github.com/hadley/mastering-shiny) | *Mastering Shiny* book by Hadley Wickham | [PRs](https://github.com/hadley/mastering-shiny/pulls?q=is%3Apr+is%3Amerged+author%3Ad-morrison) |
+| [UCLA-PHP/FluView](https://github.com/UCLA-PHP/FluView) | Flu surveillance data visualization | [PRs](https://github.com/UCLA-PHP/FluView/pulls?q=is%3Apr+is%3Amerged+author%3Ad-morrison) |
+| [ajmichaelucd/mic.sim](https://github.com/ajmichaelucd/mic.sim) | Simulation of minimum inhibitory concentration (MIC) distributions | [PRs](https://github.com/ajmichaelucd/mic.sim/pulls?q=is%3Apr+is%3Amerged+author%3Ad-morrison) |
+| [ucjug/workshop_julia_basics](https://github.com/ucjug/workshop_julia_basics) | UC Davis Julia Users Group introductory workshop materials | [PRs](https://github.com/ucjug/workshop_julia_basics/pulls?q=is%3Apr+is%3Amerged+author%3Ad-morrison) |
+| [ROBAS-UCLA/Brushing-Behavior](https://github.com/ROBAS-UCLA/Brushing-Behavior) | Oral health brushing behavior analysis | [PRs](https://github.com/ROBAS-UCLA/Brushing-Behavior/pulls?q=is%3Apr+is%3Amerged+author%3Ad-morrison) |
+| [UCLA-PHP/wastewater](https://github.com/UCLA-PHP/wastewater) | Wastewater surveillance analysis | [PRs](https://github.com/UCLA-PHP/wastewater/pulls?q=is%3Apr+is%3Amerged+author%3Ad-morrison) |
+| [easystats/parameters](https://github.com/easystats/parameters) | Parameters and statistical summaries for model objects in R | [PRs](https://github.com/easystats/parameters/pulls?q=is%3Apr+is%3Amerged+author%3Ad-morrison) |
+| [glmmTMB/glmmTMB](https://github.com/glmmTMB/glmmTMB) | Generalized linear mixed models via Template Model Builder | [PRs](https://github.com/glmmTMB/glmmTMB/pulls?q=is%3Apr+is%3Amerged+author%3Ad-morrison) |
+| [edwindj/ffbase](https://github.com/edwindj/ffbase) | Base R functions for `ff` large-data objects | [PRs](https://github.com/edwindj/ffbase/pulls?q=is%3Apr+is%3Amerged+author%3Ad-morrison) |
