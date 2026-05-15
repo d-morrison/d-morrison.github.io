@@ -31,7 +31,7 @@ evals$year <- as.factor(evals$year)
 
 # Create a plot of overall ratings over time
 ggplot(evals, aes(x = year, y = overall_rating, group = 1)) +
-  geom_line(color = "#2780E3", size = 1.2) +
+  geom_line(color = "#2780E3", linewidth = 1.2) +
   geom_point(color = "#2780E3", size = 3) +
   coord_cartesian(ylim = c(4.0, 5.0)) +
   labs(
@@ -72,7 +72,7 @@ evals_long$metric <- factor(
 )
 
 ggplot(evals_long, aes(x = year, y = rating, color = metric, group = metric)) +
-  geom_line(size = 1.2) +
+  geom_line(linewidth = 1.2) +
   geom_point(size = 3) +
   coord_cartesian(ylim = c(3.5, 5.0)) +
   labs(

@@ -6,8 +6,8 @@ read_pdf_text <- function(path) {
     "pdftotext",
     c(
       "-layout",
-      shQuote(normalizePath(path, mustWork = TRUE)),
-      shQuote(text_path)
+      normalizePath(path, mustWork = TRUE),
+      text_path
     )
   )
 
