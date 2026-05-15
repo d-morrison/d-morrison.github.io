@@ -36,12 +36,11 @@ jobs:
             libfreetype6-dev \
             libpng-dev \
             libtiff5-dev \
-            libjpeg-dev \
-            libuv1-dev
+            libjpeg-dev
 
       - name: Install R packages
         run: |
-          install.packages(c("rmarkdown", "knitr", "ggplot2", "dplyr", "tidyr"))
+          install.packages(c("rmarkdown", "knitr", "ggplot2", "dplyr", "tidyr"), repos = "https://cloud.r-project.org")
         shell: Rscript {0}
 
       - name: Build site
