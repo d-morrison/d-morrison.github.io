@@ -22,13 +22,14 @@ output_file <- "software.qmd"
 `%||%` <- function(a, b) if (!is.null(a) && !identical(a, "null")) a else b
 
 # Build the GitHub PR search URL for a repo + state.
-# Uses the global search endpoint so that the OR operator is supported.
+# Uses the global search endpoint with involves: which reliably captures
+# PRs where the user is author or assignee (including AI-assisted PRs).
 pr_search_url <- function(repo, state, user) {
   # repo is "owner/name"; encode the slash as %2F for the repo: qualifier
   encoded_repo <- gsub("/", "%2F", repo, fixed = TRUE)
   sprintf(
-    "https://github.com/search?q=repo%%3A%s+is%%3Apr+is%%3A%s+%%28author%%3A%s+OR+assignee%%3A%s%%29&type=pullrequests",
-    encoded_repo, state, user, user
+    "https://github.com/search?q=repo%%3A%s+is%%3Apr+is%%3A%s+involves%%3A%s&type=pullrequests",
+    encoded_repo, state, user
   )
 }
 
