@@ -1,15 +1,11 @@
 read_pdf_text <- function(path) {
+  if (!file.exists(path)) {
+    stop(sprintf("PDF file not found: %s (cwd: %s)", path, getwd()))
+  }
   text_path <- tempfile(fileext = ".txt")
   on.exit(unlink(text_path), add = TRUE)
 
-  output <- system2(
-    "pdftotext",
-    c(
-      "-layout",
-      normalizePath(path, mustWork = TRUE),
-      text_path
-    )
-  )
+  output <- system2("pdftotext", c("-layout", path, text_path))
 
   if (!identical(output, 0L)) {
     stop(sprintf("pdftotext failed for %s", path))
