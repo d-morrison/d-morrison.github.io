@@ -220,9 +220,6 @@ sample_size_plot <- function() {
     )
 }
 
-# Right (secondary) y-axis titles are rotated -90° by ggplot, which makes
-# text read top-to-bottom. Reverse the string so "5" ends up next to the
-# 5-tick at the top of the axis and "1" next to the 1-tick at the bottom.
 p_overall      <- rating_plot("overall_rating",           "Overall rating",
                               "UC Davis (5 = Excellent … 1 = Poor)")
 p_instructor   <- rating_plot("instructor_effectiveness", "Instructor effectiveness",
@@ -240,6 +237,35 @@ wrap_plots(p_overall, p_instructor, p_organization,
         # Role legend laid out horizontally so UCLA (2017) appears on the
         # left and UC Davis (2023+) on the right, matching the time axis.
         legend.direction = "horizontal")
+```
+
+## Student Feedback Highlights
+
+```{r}
+#| label: comment-highlights
+#| echo: false
+#| message: false
+#| warning: false
+#| results: asis
+
+comments <- evals_data$comments
+
+if (is.null(comments) || nrow(comments) == 0) {
+  cat("> *No written comments were found in the evaluation PDFs.*\n")
+} else {
+  # Display up to 3 comments per year×role group so no single group dominates.
+  by_group <- split(comments, paste(comments$year, comments$role))
+  highlights <- do.call(rbind, lapply(by_group, function(g) {
+    g[seq_len(min(3L, nrow(g))), ]
+  }))
+  highlights <- highlights[order(highlights$year), ]
+
+  for (i in seq_len(nrow(highlights))) {
+    row <- highlights[i, ]
+    label <- sprintf("**%s — %s**", row$year, row$course)
+    cat(sprintf("::: {.callout-note icon=false}\n## %s\n\n%s\n:::\n\n", label, row$comment))
+  }
+}
 ```
 
 ## UC Davis (Instructor of Record)

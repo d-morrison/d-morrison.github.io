@@ -5,7 +5,7 @@ read_pdf_text <- function(path) {
   text_path <- tempfile(fileext = ".txt")
   on.exit(unlink(text_path), add = TRUE)
 
-  output <- system2("pdftotext", c("-layout", shQuote(path), shQuote(text_path)))
+  output <- system2("pdftotext", c("-layout", path, text_path))
 
   if (!identical(output, 0L)) {
     stop(sprintf("pdftotext failed for %s", path))
@@ -117,6 +117,42 @@ counts_to_long <- function(counts, metric, year, role, course, scale_max) {
   )
 }
 
+extract_written_comments <- function(text) {
+  # Locate the first line matching a "comments" section header (case-insensitive).
+  # Common UC Davis CFL headers: "Additional Feedback", "Additional Comments",
+  # "Please write any additional comments", "Open-ended responses".
+  lines <- strsplit(text, "\n", fixed = TRUE)[[1]]
+  header_idx <- grep(
+    "(?i)(additional (feedback|comments)|open.ended|write.*comment|student.*comment|comment.*section)",
+    lines,
+    perl = TRUE
+  )
+  if (!length(header_idx)) return(character(0))
+
+  comment_lines <- lines[seq(header_idx[[1]] + 1L, length(lines))]
+
+  # Collapse runs of blank lines into a single separator, trim whitespace.
+  comment_lines <- trimws(comment_lines)
+  # Remove header-like lines (all-caps labels, page numbers, dashes).
+  comment_lines <- comment_lines[!grepl("^[A-Z ]{10,}$|^[-=]{3,}$|^[0-9]+$|^Page", comment_lines)]
+
+  # Split into individual comments on blank-line boundaries.
+  blank <- which(comment_lines == "")
+  starts <- c(1L, blank + 1L)
+  ends   <- c(blank - 1L, length(comment_lines))
+  valid  <- starts <= ends
+
+  comments <- vapply(
+    which(valid),
+    function(i) paste(comment_lines[starts[i]:ends[i]], collapse = " "),
+    character(1)
+  )
+
+  # Drop very short fragments (artefacts from PDF layout).
+  comments <- comments[nchar(trimws(comments)) >= 20L]
+  trimws(comments)
+}
+
 extract_uc_davis_eval <- function(path) {
   text <- read_pdf_text(path)
   term <- extract_first_match(text, "([A-Za-z]+) Quarter ([0-9]{4})", "term")
@@ -162,7 +198,12 @@ extract_uc_davis_eval <- function(path) {
     counts_to_long(organization$counts, "course_organization",      year, role, "Epi 204", 5L)
   )
 
-  list(summary = summary, responses = responses)
+  comments <- tryCatch(
+    extract_written_comments(text),
+    error = function(e) character(0)
+  )
+
+  list(summary = summary, responses = responses, comments = comments)
 }
 
 extract_ucla_section <- function(path) {
@@ -229,7 +270,15 @@ extract_ucla_eval <- function(paths) {
     counts_to_long(pool_ucla_counts(sections, "course_organization"),      "course_organization",      year, role, course, 9L)
   )
 
-  list(summary = summary, responses = responses)
+  # Collect written comments from all UCLA section PDFs.
+  comments <- tryCatch(
+    unique(unlist(lapply(paths, function(p) {
+      extract_written_comments(read_pdf_text(p))
+    }))),
+    error = function(e) character(0)
+  )
+
+  list(summary = summary, responses = responses, comments = comments)
 }
 
 extract_evals_data <- function(base_dir = file.path("static", "files", "evals")) {
@@ -257,8 +306,21 @@ extract_evals_data <- function(base_dir = file.path("static", "files", "evals"))
   summary   <- do.call(rbind, lapply(parts, `[[`, "summary"))
   responses <- do.call(rbind, lapply(parts, `[[`, "responses"))
 
+  # Collect comments: data frame with year, role, course, and comment text.
+  comments <- do.call(rbind, lapply(parts, function(p) {
+    if (!length(p$comments)) return(NULL)
+    data.frame(
+      year    = p$summary$year[[1]],
+      role    = p$summary$role[[1]],
+      course  = p$summary$course[[1]],
+      comment = p$comments,
+      stringsAsFactors = FALSE
+    )
+  }))
+
   list(
     summary   = summary[order(summary$year), ],
-    responses = responses[order(responses$year, responses$metric, responses$rating), ]
+    responses = responses[order(responses$year, responses$metric, responses$rating), ],
+    comments  = if (!is.null(comments)) comments[order(comments$year), ] else data.frame()
   )
 }
