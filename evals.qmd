@@ -87,7 +87,7 @@ response_rate_plot <- function() {
 }
 ```
 
-::: {#fig-evals layout-ncol=1}
+::: {#fig-evals layout-ncol=2}
 
 ```{r}
 #| label: fig-overall
