@@ -53,6 +53,7 @@ jobs:
             any::rmarkdown
             any::knitr
             any::ggplot2
+            any::scales
             any::dplyr
             any::tidyr
             any::patchwork

@@ -65,12 +65,13 @@ responses$rating_9 <- ifelse(
 )
 # Expand counts into one row per respondent so geom_violin doesn't take the
 # weighted-quantile code path (which warns "quantiles for weighted data is
-# not implemented").
+# not implemented"). Join before uncount so the join runs on the 4-row
+# summary, not on the post-expansion ~150-row table.
 responses <- responses %>%
-  uncount(count) %>%
-  mutate(year_f = factor(as.character(year), levels = year_levels)) %>%
   left_join(evals[, c("year", "role", "response_rate", "n_responses")],
-            by = c("year", "role"))
+            by = c("year", "role")) %>%
+  mutate(year_f = factor(as.character(year), levels = year_levels)) %>%
+  uncount(count)
 
 role_colors <- c("UC Davis (Instructor of Record)" = "#2780E3",
                  "UCLA (TA)" = "#E67E22")
