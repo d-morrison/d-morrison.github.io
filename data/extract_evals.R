@@ -137,8 +137,15 @@ extract_written_comments <- function(text) {
 
   # Collapse runs of blank lines into a single separator, trim whitespace.
   comment_lines <- trimws(comment_lines)
-  # Remove header-like lines (all-caps labels, page numbers, dashes).
-  comment_lines <- comment_lines[!grepl("^[A-Z ]{10,}$|^[-=]{3,}$|^[0-9]+$|^Page", comment_lines)]
+  # Remove PDF artefacts: all-caps labels, page numbers/footers, run-on dashes,
+  # and the "Class Climate evaluation … Page N" footer the UCLA PDFs embed.
+  comment_lines <- comment_lines[!grepl("^[A-Z ]{10,}$|^[-=]{3,}$|^[0-9]+$|^Page|Class Climate evaluation", comment_lines)]
+  # Strip embedded prompt fragments that the PDF interleaves with answers
+  # (e.g. "Please provide any additional comments you wish to share about ...").
+  comment_lines <- sub(
+    "(?i)Please (provide|write|share) (any )?additional comments?[^.]*\\. ?",
+    "", comment_lines, perl = TRUE
+  )
 
   # Split into individual comments on blank-line boundaries.
   blank <- which(comment_lines == "")
@@ -152,9 +159,51 @@ extract_written_comments <- function(text) {
     character(1)
   )
 
-  # Drop very short fragments (artefacts from PDF layout).
-  comments <- comments[nchar(trimws(comments)) >= 20L]
-  trimws(comments)
+  # Drop very short fragments (artefacts from PDF layout) and anything that
+  # starts mid-sentence (PDF layout sometimes splits one comment across pages
+  # and we capture only the tail — lowercase first letter is the giveaway).
+  comments <- trimws(comments)
+  comments <- comments[nchar(comments) >= 20L]
+  comments <- comments[grepl("^[A-Z\"\\(]", comments)]
+  comments
+}
+
+# Crude sentiment filter for "highlight-worthy" comments: keep only those
+# that contain a strong positive cue and no negation/criticism cue. We aren't
+# trying to do real sentiment analysis — just to surface unambiguously
+# positive feedback for the public page and leave qualifiers / critiques in
+# the source PDFs.
+positive_cues <- c(
+  "awesome", "amazing", "excellent", "fantastic", "wonderful",
+  "great", "loved", "love ", "perfect", "best", "outstanding", "incredible",
+  "phenomenal", "appreciate", "appreciated", "engaging", "patient",
+  "knowledgeable", "helpful", "supportive", "approachable", "responsive",
+  "thorough", "valuable", "thank you", "really enjoyed", "enjoyed the",
+  "strong foundation", "well-structured", "well-organized", "very good",
+  "very clear", "very helpful"
+)
+negative_cues <- c(
+  " but ", " however", " though ", "although", " could have", " should ",
+  " would have", " wish ", " needed ", " lacked", " lack of", " rushed",
+  " rush through", "confusing", "frustrating", "impeded", "boring",
+  " poor ", " bad ", " weak ", "disappointed", "not enough", "too much",
+  "not clear", "wasn't", "didn't", "isn't", "doesn't", "wouldn't",
+  "couldn't", "shouldn't", "problem", " issue", "more material",
+  "less ", "missing", "instead of", "rather than", "n't ",
+  " slow", " slower", "took away", "spent more time", "if he"
+)
+
+is_positive_comment <- function(comment) {
+  # Normalize Unicode curly quotes -> ASCII so "wasn't" etc. matches the
+  # cue list (PDF extraction yields right single quotation marks U+2019).
+  lc <- tolower(comment)
+  lc <- gsub("[‘’]", "'", lc, perl = TRUE)
+  lc <- gsub("[“”]", '"', lc, perl = TRUE)
+  has_positive <- any(vapply(positive_cues, grepl, logical(1),
+                             x = lc, fixed = TRUE))
+  has_negative <- any(vapply(negative_cues, grepl, logical(1),
+                             x = lc, fixed = TRUE))
+  has_positive && !has_negative
 }
 
 extract_uc_davis_eval <- function(path) {

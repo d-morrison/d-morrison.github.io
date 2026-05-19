@@ -248,22 +248,30 @@ wrap_plots(p_overall, p_instructor, p_organization,
 #| warning: false
 #| results: asis
 
+source("data/extract_evals.R", local = TRUE)
 comments <- evals_data$comments
 
 if (is.null(comments) || nrow(comments) == 0) {
   cat("> *No written comments were found in the evaluation PDFs.*\n")
 } else {
-  # Display up to 3 comments per year×role group so no single group dominates.
-  by_group <- split(comments, paste(comments$year, comments$role))
-  highlights <- do.call(rbind, lapply(by_group, function(g) {
-    g[seq_len(min(3L, nrow(g))), ]
-  }))
-  highlights <- highlights[order(highlights$year), ]
+  # Keep only unambiguously positive comments (see is_positive_comment in
+  # extract_evals.R) — qualifiers and critiques are still in the source PDFs.
+  positive <- comments[vapply(comments$comment, is_positive_comment, logical(1)), ]
 
-  for (i in seq_len(nrow(highlights))) {
-    row <- highlights[i, ]
-    label <- sprintf("**%s — %s**", row$year, row$course)
-    cat(sprintf("::: {.callout-note icon=false}\n## %s\n\n%s\n:::\n\n", label, row$comment))
+  if (nrow(positive) == 0) {
+    cat("> *No comments matched the positive-highlight filter.*\n")
+  } else {
+    # One callout per class (year × course), with each surviving comment
+    # as a bullet inside.
+    by_class <- split(positive, paste(positive$year, positive$course, sep = "|"))
+    by_class <- by_class[order(vapply(by_class, function(g) g$year[[1]], integer(1)))]
+
+    for (g in by_class) {
+      label <- sprintf("%s — %s", g$year[[1]], g$course[[1]])
+      cat(sprintf("::: {.callout-note icon=false title=\"%s\"}\n", label))
+      for (cmt in g$comment) cat("- ", cmt, "\n", sep = "")
+      cat(":::\n\n")
+    }
   }
 }
 ```
