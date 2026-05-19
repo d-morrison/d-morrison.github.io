@@ -226,9 +226,9 @@ p_sample       <- sample_size_plot()
 p_response     <- response_rate_plot()
 
 wrap_plots(p_overall, p_instructor, p_organization,
-           p_sample, p_response, plot_spacer(),
+           p_sample, p_response, guide_area(),
            ncol = 3, guides = "collect") &
-  theme(legend.position = "bottom", legend.box = "vertical")
+  theme(legend.box = "vertical", legend.justification = "left")
 ```
 
 ## UC Davis (Instructor of Record)
