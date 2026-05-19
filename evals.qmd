@@ -4,12 +4,14 @@ title: "Teaching Evaluations"
 
 ## Evaluation Trends Over Time
 
-The plots below are generated from evaluation data extracted from the linked PDF summaries. UCLA TA evaluations used a 9-point scale; those values are linearly rescaled to the 5-point UC Davis scale so they can be shown on the same axis.
+The plot below is generated from evaluation data extracted from the linked PDF summaries.
 
 ```{r}
 #| echo: false
 #| message: false
 #| warning: false
+#| fig-width: 8
+#| fig-height: 9
 
 library(ggplot2)
 library(dplyr)
@@ -33,41 +35,79 @@ evals$role <- ifelse(
   "UC Davis (Instructor of Record)"
 )
 
-evals_long <- evals %>%
-  select(year, role, course, overall_rating, instructor_effectiveness, course_organization) %>%
+metric_means <- evals %>%
+  select(year, role, n_responses,
+         overall_rating, instructor_effectiveness, course_organization) %>%
   pivot_longer(
     cols = c(overall_rating, instructor_effectiveness, course_organization),
     names_to = "metric",
     values_to = "rating"
   )
 
-evals_long$metric <- factor(
-  evals_long$metric,
-  levels = c("overall_rating", "instructor_effectiveness", "course_organization"),
-  labels = c("Overall rating", "Instructor effectiveness", "Course organization")
+metric_sds <- evals %>%
+  select(year, role,
+         overall_rating_sd, instructor_effectiveness_sd, course_organization_sd) %>%
+  pivot_longer(
+    cols = ends_with("_sd"),
+    names_to = "metric",
+    values_to = "sd"
+  ) %>%
+  mutate(metric = sub("_sd$", "", metric))
+
+evals_long <- metric_means %>% left_join(metric_sds, by = c("year", "role", "metric"))
+
+metric_levels <- c("overall_rating", "instructor_effectiveness", "course_organization")
+metric_labels <- c(
+  overall_rating           = "Overall rating\n(1 = Poor … 5 = Excellent)",
+  instructor_effectiveness = "Instructor effectiveness\n(1 = Poor … 5 = Excellent)",
+  course_organization      = "Course was well-organized\n(1 = Strongly Disagree … 5 = Strongly Agree)"
 )
+evals_long$metric <- factor(evals_long$metric, levels = metric_levels, labels = metric_labels)
 
 year_breaks <- sort(unique(evals$year))
 
-ggplot(evals_long, aes(x = year, y = rating, color = metric, shape = role)) +
-  geom_line(aes(group = interaction(metric, role)), linewidth = 1) +
-  geom_point(size = 3) +
+ggplot(evals_long, aes(x = year, y = rating, shape = role, color = role)) +
+  geom_errorbar(
+    aes(ymin = pmax(rating - sd, 1), ymax = pmin(rating + sd, 5)),
+    width = 0.4,
+    linewidth = 0.5,
+    alpha = 0.6
+  ) +
+  geom_line(aes(group = role), linewidth = 0.8) +
+  geom_point(aes(size = n_responses)) +
+  geom_text(
+    aes(label = paste0("n=", n_responses)),
+    vjust = -1.3,
+    hjust = 0.5,
+    size = 3,
+    show.legend = FALSE
+  ) +
+  facet_wrap(~ metric, ncol = 1) +
   scale_x_continuous(breaks = year_breaks) +
-  coord_cartesian(ylim = c(3.5, 5.0)) +
+  scale_y_continuous(limits = c(1, 5), breaks = 1:5) +
+  scale_size_continuous(range = c(2.5, 5), name = "Respondents") +
+  scale_color_manual(values = c("UC Davis (Instructor of Record)" = "#2780E3",
+                                "UCLA (TA)" = "#E67E22")) +
   labs(
     x = "Year",
-    y = "Rating (out of 5)",
-    color = "Metric",
+    y = "Rating (mean ± 1 SD, clipped to scale)",
+    color = "Role",
     shape = "Role",
-    caption = "Data extracted from UC Davis and UCLA teaching evaluation summaries."
+    caption = paste(
+      "Each panel shows a single survey item; items use different Likert anchors and aren't directly comparable.",
+      "UCLA TA evaluations used a 9-point scale (1 = Very Low … 9 = Very High); means and SDs are linearly",
+      "rescaled to the 5-point UC Davis scale shown here. Error bars are clipped to the [1, 5] scale.",
+      sep = "\n"
+    )
   ) +
-  scale_color_manual(values = c("#2780E3", "#28A745", "#E67E22")) +
   theme_minimal() +
   theme(
     axis.title = element_text(size = 12),
     axis.text = element_text(size = 10),
+    strip.text = element_text(face = "bold", size = 11),
     legend.position = "bottom",
-    legend.box = "vertical"
+    legend.box = "vertical",
+    plot.caption = element_text(hjust = 0, size = 9)
   )
 ```
 

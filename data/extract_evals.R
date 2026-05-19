@@ -43,22 +43,25 @@ extract_line_tail_stats <- function(text, pattern, label) {
     stop(sprintf("Could not parse numeric values for %s", label))
   }
 
+  # The trailing columns in UC Davis summaries are: M, SD, Mdn, N.
   list(
     mean = tokens[length(tokens) - 3],
-    n = tokens[length(tokens)]
+    sd   = tokens[length(tokens) - 2],
+    n    = tokens[length(tokens)]
   )
 }
 
 extract_ucla_question_stats <- function(text, question_number, label) {
   pattern <- sprintf(
-    "(?s)%s\\).*?n=([0-9]+).*?av\\.=?([0-9]+(?:\\.[0-9]+)?)",
+    "(?s)%s\\).*?n=([0-9]+).*?av\\.=?([0-9]+(?:\\.[0-9]+)?).*?dev\\.=?([0-9]+(?:\\.[0-9]+)?)",
     question_number
   )
   captures <- extract_first_match(text, pattern, label)
 
   list(
-    n = as.integer(captures[[1]]),
-    mean = as.numeric(captures[[2]])
+    n    = as.integer(captures[[1]]),
+    mean = as.numeric(captures[[2]]),
+    sd   = as.numeric(captures[[3]])
   )
 }
 
@@ -66,8 +69,23 @@ weighted_mean <- function(values, weights) {
   sum(values * weights) / sum(weights)
 }
 
+# Pool SDs across groups using sum-of-squares of deviations from each group mean,
+# plus between-group variation from each group mean to the overall mean.
+pooled_sd <- function(means, sds, ns) {
+  overall_mean <- weighted_mean(means, ns)
+  within_ss <- sum((ns - 1) * sds^2)
+  between_ss <- sum(ns * (means - overall_mean)^2)
+  sqrt((within_ss + between_ss) / (sum(ns) - 1))
+}
+
 normalize_nine_point_to_five <- function(value) {
   1 + (value - 1) * 4 / 8
+}
+
+# A linear rescale of x stretches/compresses spread by the same factor on
+# either side of the midpoint, so SDs only get multiplied by that slope (4/8).
+rescale_nine_point_sd_to_five <- function(value) {
+  value * 4 / 8
 }
 
 extract_uc_davis_eval <- function(path) {
@@ -95,8 +113,11 @@ extract_uc_davis_eval <- function(path) {
     quarter = term[[1]],
     course = "Epi 204",
     overall_rating = overall$mean,
+    overall_rating_sd = overall$sd,
     instructor_effectiveness = instructor$mean,
+    instructor_effectiveness_sd = instructor$sd,
     course_organization = organization$mean,
+    course_organization_sd = organization$sd,
     response_rate = as.numeric(extract_first_match(text, "% responding\\s+([0-9]+(?:\\.[0-9]+)?)", "response rate")) / 100,
     n_responses = as.integer(overall$n),
     stringsAsFactors = FALSE
@@ -118,34 +139,34 @@ extract_ucla_section <- function(path) {
   )
 }
 
+summarize_ucla_metric <- function(sections, metric) {
+  means <- vapply(sections, function(section) section[[metric]]$mean, numeric(1))
+  sds   <- vapply(sections, function(section) section[[metric]]$sd,   numeric(1))
+  ns    <- vapply(sections, function(section) section[[metric]]$n,    numeric(1))
+
+  list(
+    mean = round(normalize_nine_point_to_five(weighted_mean(means, ns)), 2),
+    sd   = round(rescale_nine_point_sd_to_five(pooled_sd(means, sds, ns)), 2)
+  )
+}
+
 extract_ucla_eval <- function(paths) {
   sections <- lapply(paths, extract_ucla_section)
+
+  overall      <- summarize_ucla_metric(sections, "overall_rating")
+  instructor   <- summarize_ucla_metric(sections, "instructor_effectiveness")
+  organization <- summarize_ucla_metric(sections, "course_organization")
 
   data.frame(
     year = sections[[1]]$year,
     quarter = "Winter",
     course = "Biostat 100B (TA)",
-    overall_rating = round(
-      normalize_nine_point_to_five(weighted_mean(
-        vapply(sections, function(section) section$overall_rating$mean, numeric(1)),
-        vapply(sections, function(section) section$overall_rating$n, numeric(1))
-      )),
-      2
-    ),
-    instructor_effectiveness = round(
-      normalize_nine_point_to_five(weighted_mean(
-        vapply(sections, function(section) section$instructor_effectiveness$mean, numeric(1)),
-        vapply(sections, function(section) section$instructor_effectiveness$n, numeric(1))
-      )),
-      2
-    ),
-    course_organization = round(
-      normalize_nine_point_to_five(weighted_mean(
-        vapply(sections, function(section) section$course_organization$mean, numeric(1)),
-        vapply(sections, function(section) section$course_organization$n, numeric(1))
-      )),
-      2
-    ),
+    overall_rating = overall$mean,
+    overall_rating_sd = overall$sd,
+    instructor_effectiveness = instructor$mean,
+    instructor_effectiveness_sd = instructor$sd,
+    course_organization = organization$mean,
+    course_organization_sd = organization$sd,
     response_rate = sum(vapply(sections, function(section) section$n_responses, numeric(1))) /
       sum(vapply(sections, function(section) section$enrollment, numeric(1))),
     n_responses = sum(vapply(sections, function(section) section$n_responses, numeric(1))),
