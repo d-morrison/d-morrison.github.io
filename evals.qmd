@@ -77,10 +77,13 @@ rating_plot <- function(metric) {
       aes(x = year, y = mean_9, color = role, shape = role,
           alpha = response_rate, size = n)
     ) +
-    geom_text(
+    geom_label(
       data = summ,
       aes(x = year, y = mean_9, color = role, label = paste0("n=", n)),
-      vjust = -1.4, hjust = 0.5, size = 3, alpha = 1, show.legend = FALSE
+      vjust = -0.8, hjust = 0.5, size = 3.2, alpha = 1,
+      fill = "white", label.size = 0.3, label.padding = unit(0.15, "lines"),
+      label.r = unit(0.1, "lines"), fontface = "bold",
+      show.legend = FALSE
     ) +
     scale_x_continuous(breaks = year_breaks) +
     scale_y_continuous(
