@@ -24,13 +24,21 @@ if (!file.exists(rds_path)) {
     "  Rscript data/build_evals_data.R"
   )
 }
-evals <- readRDS(rds_path)
+evals_data <- readRDS(rds_path)
+evals      <- evals_data$summary
+responses  <- evals_data$responses
 
-evals$role <- ifelse(
-  grepl("TA", evals$course, fixed = TRUE),
-  "UCLA (TA)",
-  "UC Davis (Instructor of Record)"
+# Lift every rating onto the UCLA 9-point axis: 9pt = 1 + (5pt - 1) * 2.
+# Means and SDs were already converted earlier; do the same for the raw
+# UC Davis responses so violins and the summary line live in the same space.
+responses$rating_9 <- ifelse(
+  responses$scale_max == 5,
+  1 + (responses$rating - 1) * 2,
+  responses$rating
 )
+responses <- merge(responses,
+                   evals[, c("year", "role", "response_rate", "n_responses")],
+                   by = c("year", "role"))
 
 year_breaks <- sort(unique(evals$year))
 role_colors <- c("UC Davis (Instructor of Record)" = "#2780E3",
@@ -42,31 +50,41 @@ five_to_nine     <- function(x) 1 + (x - 1) * 2
 nine_to_five     <- function(x) 1 + (x - 1) * 4 / 8
 
 rating_plot <- function(metric) {
-  sd_col <- paste0(metric, "_sd")
-  df <- data.frame(
+  resp <- responses[responses$metric == metric, ]
+  summ <- data.frame(
     year          = evals$year,
     role          = evals$role,
-    rating        = five_to_nine(evals[[metric]]),
-    sd            = evals[[sd_col]] * 2,
+    mean_9        = five_to_nine(evals[[metric]]),
     n             = evals$n_responses,
     response_rate = evals$response_rate
   )
 
-  ggplot(df, aes(x = year, y = rating, color = role, shape = role,
-                 alpha = response_rate)) +
-    geom_errorbar(
-      aes(ymin = pmax(rating - sd, 1), ymax = pmin(rating + sd, 9)),
-      width = 0.4, linewidth = 0.5
+  ggplot() +
+    geom_violin(
+      data = resp,
+      aes(x = year, y = rating_9, group = interaction(year, role),
+          fill = role, alpha = response_rate, weight = count),
+      width = 1.4, scale = "width", colour = NA, bw = 0.6
     ) +
-    geom_line(aes(group = role), linewidth = 0.8) +
-    geom_point(aes(size = n)) +
-    geom_text(aes(label = paste0("n=", n)),
-              vjust = -1.4, hjust = 0.5, size = 3,
-              alpha = 1, show.legend = FALSE) +
+    geom_line(
+      data = summ,
+      aes(x = year, y = mean_9, group = role, color = role,
+          alpha = response_rate),
+      linewidth = 0.8
+    ) +
+    geom_point(
+      data = summ,
+      aes(x = year, y = mean_9, color = role, shape = role,
+          alpha = response_rate, size = n)
+    ) +
+    geom_text(
+      data = summ,
+      aes(x = year, y = mean_9, color = role, label = paste0("n=", n)),
+      vjust = -1.4, hjust = 0.5, size = 3, alpha = 1, show.legend = FALSE
+    ) +
     scale_x_continuous(breaks = year_breaks) +
     scale_y_continuous(
       name = "UCLA (9-pt)",
-      limits = c(1, 9),
       breaks = 1:9,
       sec.axis = sec_axis(
         transform = nine_to_five,
@@ -74,6 +92,12 @@ rating_plot <- function(metric) {
         breaks = 1:5
       )
     ) +
+    coord_cartesian(ylim = c(1, 9), clip = "off") +
+    scale_fill_manual(values = role_colors, name = "Role",
+                      guide = guide_legend(order = 1)) +
+    scale_color_manual(values = role_colors, name = "Role",
+                       guide = guide_legend(order = 1)) +
+    scale_shape_discrete(name = "Role", guide = guide_legend(order = 1)) +
     scale_size_continuous(range = c(2.5, 5), name = "Respondents",
                           guide = guide_legend(order = 2)) +
     scale_alpha_continuous(
@@ -83,12 +107,13 @@ rating_plot <- function(metric) {
       name = "Response rate",
       guide = guide_legend(order = 3, override.aes = list(size = 4))
     ) +
-    scale_color_manual(values = role_colors, name = "Role",
-                       guide = guide_legend(order = 1)) +
-    scale_shape_discrete(name = "Role", guide = guide_legend(order = 1)) +
     labs(x = "Year") +
     theme_minimal() +
-    theme(legend.position = "bottom", legend.box = "vertical")
+    theme(
+      legend.position = "bottom",
+      legend.box = "vertical",
+      plot.margin = margin(t = 18, r = 8, b = 4, l = 4)
+    )
 }
 
 response_rate_plot <- function() {
@@ -98,8 +123,8 @@ response_rate_plot <- function() {
     geom_text(aes(label = paste0("n=", n_responses)),
               vjust = -1.4, hjust = 0.5, size = 3, show.legend = FALSE) +
     scale_x_continuous(breaks = year_breaks) +
-    scale_y_continuous(labels = scales::percent, limits = c(0, 1),
-                       breaks = seq(0, 1, 0.25)) +
+    scale_y_continuous(labels = scales::percent, breaks = seq(0, 1, 0.25)) +
+    coord_cartesian(ylim = c(0, 1), clip = "off") +
     scale_size_continuous(range = c(2.5, 5), name = "Respondents",
                           guide = guide_legend(order = 2)) +
     scale_color_manual(values = role_colors, name = "Role",
@@ -107,7 +132,11 @@ response_rate_plot <- function() {
     scale_shape_discrete(name = "Role", guide = guide_legend(order = 1)) +
     labs(x = "Year", y = "Response rate") +
     theme_minimal() +
-    theme(legend.position = "bottom", legend.box = "vertical")
+    theme(
+      legend.position = "bottom",
+      legend.box = "vertical",
+      plot.margin = margin(t = 18, r = 8, b = 4, l = 4)
+    )
 }
 ```
 
@@ -149,7 +178,7 @@ rating_plot("course_organization")
 response_rate_plot()
 ```
 
-Teaching-evaluation trends over time. The three rating panels share a dual y-axis: the **left axis** is the UCLA TA 9-point Likert scale, the **right axis** is the UC Davis IOR 5-point scale, and the two are linearly aligned so each point can be read against either. Points show the mean rating; error bars span **±1 standard deviation** of the individual respondent ratings (a measure of student-to-student spread, *not* the standard error of the mean), clipped to scale. Point size is proportional to the number of respondents (also labeled `n=...`), and **opacity is proportional to the response rate** (responses ÷ enrolled), so a faded point means the mean is computed from a smaller share of the class. The three rating items use different Likert anchors and aren't directly comparable across panels.
+Teaching-evaluation trends over time. The three rating panels share a dual y-axis: the **left axis** is the UCLA TA 9-point Likert scale, the **right axis** is the UC Davis IOR 5-point scale, and the two are linearly aligned. UC Davis responses (originally on the 5-point scale) are stretched onto the 9-point axis so both sets of distributions sit in the same coordinate space — so e.g. a UC Davis rating of 4 plots at 7 on the left axis, which the right axis correctly reads as 4. **Violins show the kernel density of individual respondent ratings** (a measure of student-to-student spread), weighted by their count in the histogram from each summary. Lines and points show the mean trend; point size is proportional to the number of respondents (also labeled `n=...`), and **opacity is proportional to the response rate** (responses ÷ enrolled). The three rating items use different Likert anchors and aren't directly comparable across panels.
 
 :::
 

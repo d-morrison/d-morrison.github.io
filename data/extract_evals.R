@@ -39,29 +39,45 @@ extract_line_tail_stats <- function(text, pattern, label) {
   }
 
   tokens <- extract_numeric_tokens(matched_lines[[1]])
-  if (length(tokens) < 4) {
+  if (length(tokens) < 14) {
     stop(sprintf("Could not parse numeric values for %s", label))
   }
 
-  # The trailing columns in UC Davis summaries are: M, SD, Mdn, N.
+  # UC Davis line format: (count_r, pct_r) for r in 5..1, then M, SD, Mdn, N.
+  counts <- tokens[c(1, 3, 5, 7, 9)]
+  names(counts) <- as.character(5:1)
+
   list(
-    mean = tokens[length(tokens) - 3],
-    sd   = tokens[length(tokens) - 2],
-    n    = tokens[length(tokens)]
+    mean   = tokens[length(tokens) - 3],
+    sd     = tokens[length(tokens) - 2],
+    n      = tokens[length(tokens)],
+    counts = counts
   )
 }
 
 extract_ucla_question_stats <- function(text, question_number, label) {
-  pattern <- sprintf(
-    "(?s)%s\\).*?n=([0-9]+).*?av\\.=?([0-9]+(?:\\.[0-9]+)?).*?dev\\.=?([0-9]+(?:\\.[0-9]+)?)",
-    question_number
+  # Each question section runs from "N.M)" to the next "N.(M+1))" or the
+  # next "3." subsection. Slice it out first, then pull pieces by name —
+  # the layout puts n=, av.=, dev.=, and the count vector in inconsistent
+  # orders across PDFs.
+  section_pattern <- sprintf("(?s)%s\\)(.*?)(?:[0-9]+\\.[0-9]+\\)| 3\\.)", question_number)
+  section <- extract_first_match(text, section_pattern, paste0(label, " section"))[[1]]
+
+  counts_pattern <- paste0(
+    "Very Low or\\s+",
+    "([0-9]+)\\s+([0-9]+)\\s+([0-9]+)\\s+([0-9]+)\\s+",
+    "([0-9]+)\\s+([0-9]+)\\s+([0-9]+)\\s+([0-9]+)\\s+([0-9]+)",
+    "\\s+Very High or"
   )
-  captures <- extract_first_match(text, pattern, label)
+  count_captures <- extract_first_match(section, counts_pattern, paste0(label, " counts"))
+  counts <- as.integer(count_captures)
+  names(counts) <- as.character(1:9)
 
   list(
-    n    = as.integer(captures[[1]]),
-    mean = as.numeric(captures[[2]]),
-    sd   = as.numeric(captures[[3]])
+    n      = as.integer(extract_first_match(section, "n=([0-9]+)", paste0(label, " n"))[[1]]),
+    mean   = as.numeric(extract_first_match(section, "av\\.=?([0-9]+(?:\\.[0-9]+)?)", paste0(label, " mean"))[[1]]),
+    sd     = as.numeric(extract_first_match(section, "dev\\.=?([0-9]+(?:\\.[0-9]+)?)", paste0(label, " sd"))[[1]]),
+    counts = counts
   )
 }
 
@@ -88,6 +104,19 @@ rescale_nine_point_sd_to_five <- function(value) {
   value * 4 / 8
 }
 
+counts_to_long <- function(counts, metric, year, role, course, scale_max) {
+  data.frame(
+    year      = year,
+    role      = role,
+    course    = course,
+    metric    = metric,
+    scale_max = scale_max,
+    rating    = as.integer(names(counts)),
+    count     = as.integer(counts),
+    stringsAsFactors = FALSE
+  )
+}
+
 extract_uc_davis_eval <- function(path) {
   text <- read_pdf_text(path)
   term <- extract_first_match(text, "([A-Za-z]+) Quarter ([0-9]{4})", "term")
@@ -108,10 +137,14 @@ extract_uc_davis_eval <- function(path) {
     "course organization"
   )
 
-  data.frame(
-    year = as.integer(term[[2]]),
+  year <- as.integer(term[[2]])
+  role <- "UC Davis (Instructor of Record)"
+
+  summary <- data.frame(
+    year = year,
     quarter = term[[1]],
     course = "Epi 204",
+    role = role,
     overall_rating = overall$mean,
     overall_rating_sd = overall$sd,
     instructor_effectiveness = instructor$mean,
@@ -122,6 +155,14 @@ extract_uc_davis_eval <- function(path) {
     n_responses = as.integer(overall$n),
     stringsAsFactors = FALSE
   )
+
+  responses <- rbind(
+    counts_to_long(overall$counts,      "overall_rating",           year, role, "Epi 204", 5L),
+    counts_to_long(instructor$counts,   "instructor_effectiveness", year, role, "Epi 204", 5L),
+    counts_to_long(organization$counts, "course_organization",      year, role, "Epi 204", 5L)
+  )
+
+  list(summary = summary, responses = responses)
 }
 
 extract_ucla_section <- function(path) {
@@ -150,6 +191,10 @@ summarize_ucla_metric <- function(sections, metric) {
   )
 }
 
+pool_ucla_counts <- function(sections, metric) {
+  Reduce(`+`, lapply(sections, function(section) section[[metric]]$counts))
+}
+
 extract_ucla_eval <- function(paths) {
   sections <- lapply(paths, extract_ucla_section)
 
@@ -157,10 +202,15 @@ extract_ucla_eval <- function(paths) {
   instructor   <- summarize_ucla_metric(sections, "instructor_effectiveness")
   organization <- summarize_ucla_metric(sections, "course_organization")
 
-  data.frame(
-    year = sections[[1]]$year,
+  year <- sections[[1]]$year
+  role <- "UCLA (TA)"
+  course <- "Biostat 100B (TA)"
+
+  summary <- data.frame(
+    year = year,
     quarter = "Winter",
-    course = "Biostat 100B (TA)",
+    course = course,
+    role = role,
     overall_rating = overall$mean,
     overall_rating_sd = overall$sd,
     instructor_effectiveness = instructor$mean,
@@ -172,6 +222,14 @@ extract_ucla_eval <- function(paths) {
     n_responses = sum(vapply(sections, function(section) section$n_responses, numeric(1))),
     stringsAsFactors = FALSE
   )
+
+  responses <- rbind(
+    counts_to_long(pool_ucla_counts(sections, "overall_rating"),           "overall_rating",           year, role, course, 9L),
+    counts_to_long(pool_ucla_counts(sections, "instructor_effectiveness"), "instructor_effectiveness", year, role, course, 9L),
+    counts_to_long(pool_ucla_counts(sections, "course_organization"),      "course_organization",      year, role, course, 9L)
+  )
+
+  list(summary = summary, responses = responses)
 }
 
 extract_evals_data <- function(base_dir = file.path("static", "files", "evals")) {
@@ -191,10 +249,16 @@ extract_evals_data <- function(base_dir = file.path("static", "files", "evals"))
     )
   )
 
-  evals <- rbind(
-    extract_ucla_eval(ucla_paths),
-    do.call(rbind, lapply(uc_davis_paths, extract_uc_davis_eval))
+  parts <- c(
+    list(extract_ucla_eval(ucla_paths)),
+    lapply(uc_davis_paths, extract_uc_davis_eval)
   )
 
-  evals[order(evals$year), ]
+  summary   <- do.call(rbind, lapply(parts, `[[`, "summary"))
+  responses <- do.call(rbind, lapply(parts, `[[`, "responses"))
+
+  list(
+    summary   = summary[order(summary$year), ],
+    responses = responses[order(responses$year, responses$metric, responses$rating), ]
+  )
 }

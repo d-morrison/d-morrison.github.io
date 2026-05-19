@@ -8,9 +8,10 @@ source("data/extract_evals.R")
 # Extract the data
 evals_data <- extract_evals_data()
 
-# Save to RDS file
 saveRDS(evals_data, "data/evals_data.rds")
 
 cat("Evaluation data extracted and saved to data/evals_data.rds\n")
-cat("Rows:", nrow(evals_data), "\n")
-print(evals_data)
+cat("Summary rows:", nrow(evals_data$summary), "\n")
+print(evals_data$summary)
+cat("\nResponse rows:", nrow(evals_data$responses), "\n")
+print(head(evals_data$responses, 12))
