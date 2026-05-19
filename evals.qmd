@@ -9,8 +9,8 @@ title: "Teaching Evaluations"
 #| echo: false
 #| message: false
 #| warning: false
-#| fig-width: 11
-#| fig-height: 9
+#| fig-width: 14
+#| fig-height: 10
 #| fig-cap: |
 #|   Teaching-evaluation trends over time. The three rating panels share a dual
 #|   y-axis: the **left axis** is the UCLA TA 9-point Likert scale, the **right
@@ -145,7 +145,16 @@ rating_plot <- function(metric, title, right_axis_name) {
     theme_minimal() +
     theme(
       plot.title = element_text(face = "bold", size = 11),
-      plot.margin = margin(t = 16, r = 8, b = 4, l = 4)
+      plot.margin = margin(t = 18, r = 18, b = 14, l = 14),
+      # Color-code each y-axis to match the role whose observations it
+      # natively describes: UCLA (9-pt, orange) on the left, UC Davis
+      # (5-pt, blue) on the right.
+      axis.title.y       = element_text(color = role_colors[["UCLA (TA)"]]),
+      axis.text.y        = element_text(color = role_colors[["UCLA (TA)"]]),
+      axis.ticks.y       = element_line(color = role_colors[["UCLA (TA)"]]),
+      axis.title.y.right = element_text(color = role_colors[["UC Davis (Instructor of Record)"]]),
+      axis.text.y.right  = element_text(color = role_colors[["UC Davis (Instructor of Record)"]]),
+      axis.ticks.y.right = element_line(color = role_colors[["UC Davis (Instructor of Record)"]])
     )
 }
 
@@ -170,20 +179,55 @@ response_rate_plot <- function() {
     theme_minimal() +
     theme(
       plot.title = element_text(face = "bold", size = 11),
-      plot.margin = margin(t = 16, r = 8, b = 4, l = 4)
+      plot.margin = margin(t = 18, r = 18, b = 14, l = 14)
     )
 }
 
+sample_size_plot <- function() {
+  df <- evals %>% transmute(year_f, role, n = n_responses,
+                            enrollment = round(n_responses / response_rate))
+  enr_max <- max(df$enrollment)
+  ggplot(df, aes(x = year_f, y = n, color = role, shape = role)) +
+    geom_segment(aes(xend = year_f, y = 0, yend = enrollment),
+                 linewidth = 0.4, color = "grey75",
+                 show.legend = FALSE) +
+    geom_point(aes(y = enrollment), shape = 1, size = 3, stroke = 0.7,
+               color = "grey45", show.legend = FALSE) +
+    geom_line(aes(group = role), linewidth = 0.8) +
+    geom_point(aes(size = n)) +
+    geom_label(aes(label = paste0("n=", n)),
+               vjust = -0.8, hjust = 0.5, size = 3.2, alpha = 1,
+               fill = "white", label.size = 0.3,
+               label.padding = unit(0.15, "lines"),
+               label.r = unit(0.1, "lines"), fontface = "bold",
+               show.legend = FALSE) +
+    scale_y_continuous(breaks = scales::pretty_breaks(n = 5)) +
+    coord_cartesian(ylim = c(0, enr_max * 1.05), clip = "off") +
+    shared_role_scales +
+    labs(title = "Sample size", x = "Year",
+         y = "Respondents (filled) vs. enrolled (open)") +
+    theme_minimal() +
+    theme(
+      plot.title = element_text(face = "bold", size = 11),
+      plot.margin = margin(t = 18, r = 18, b = 14, l = 14)
+    )
+}
+
+# Right (secondary) y-axis titles are rotated -90° by ggplot, which makes
+# text read top-to-bottom. Reverse the string so "5" ends up next to the
+# 5-tick at the top of the axis and "1" next to the 1-tick at the bottom.
 p_overall      <- rating_plot("overall_rating",           "Overall rating",
-                              "UC Davis (1 = Poor … 5 = Excellent)")
+                              "UC Davis (5 = Excellent … 1 = Poor)")
 p_instructor   <- rating_plot("instructor_effectiveness", "Instructor effectiveness",
-                              "UC Davis (1 = Poor … 5 = Excellent)")
+                              "UC Davis (5 = Excellent … 1 = Poor)")
 p_organization <- rating_plot("course_organization",      "Course well-organized",
-                              "UC Davis (1 = Strongly Disagree … 5 = Strongly Agree)")
+                              "UC Davis (5 = Strongly Agree … 1 = Strongly Disagree)")
+p_sample       <- sample_size_plot()
 p_response     <- response_rate_plot()
 
-wrap_plots(p_overall, p_instructor, p_organization, p_response,
-           ncol = 2, guides = "collect") &
+wrap_plots(p_overall, p_instructor, p_organization,
+           p_sample, p_response, plot_spacer(),
+           ncol = 3, guides = "collect") &
   theme(legend.position = "bottom", legend.box = "vertical")
 ```
 
