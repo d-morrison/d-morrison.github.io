@@ -51,6 +51,12 @@ responses  <- evals_data$responses
 year_levels    <- as.character(sort(unique(evals$year)))
 evals$year_f   <- factor(as.character(evals$year), levels = year_levels)
 
+# Order roles in time order (UCLA 2017 first, UC Davis 2023+ second) so the
+# legend reads left-to-right the same way the x-axis does.
+role_levels <- c("UCLA (TA)", "UC Davis (Instructor of Record)")
+evals$role  <- factor(evals$role, levels = role_levels)
+responses$role <- factor(responses$role, levels = role_levels)
+
 # Lift every rating onto the UCLA 9-point axis: 9pt = 1 + (5pt - 1) * 2.
 responses$rating_9 <- ifelse(
   responses$scale_max == 5,
@@ -228,7 +234,11 @@ p_response     <- response_rate_plot()
 wrap_plots(p_overall, p_instructor, p_organization,
            p_sample, p_response, guide_area(),
            ncol = 3, guides = "collect") &
-  theme(legend.box = "vertical", legend.justification = "left")
+  theme(legend.box = "vertical",
+        legend.justification = "left",
+        # Role legend laid out horizontally so UCLA (2017) appears on the
+        # left and UC Davis (2023+) on the right, matching the time axis.
+        legend.direction = "horizontal")
 ```
 
 ## UC Davis (Instructor of Record)
