@@ -5,14 +5,33 @@ title: "Teaching Evaluations"
 ## Evaluation Trends Over Time
 
 ```{r}
-#| label: setup-evals
+#| label: fig-evals
 #| echo: false
 #| message: false
 #| warning: false
+#| fig-width: 11
+#| fig-height: 9
+#| fig-cap: |
+#|   Teaching-evaluation trends over time. The three rating panels share a dual
+#|   y-axis: the **left axis** is the UCLA TA 9-point Likert scale, the **right
+#|   axis** is the UC Davis IOR 5-point scale, and the two are linearly
+#|   aligned. UC Davis responses (originally on the 5-point scale) are
+#|   stretched onto the 9-point axis so both sets of distributions sit in the
+#|   same coordinate space — e.g. a UC Davis rating of 4 plots at 7 on the
+#|   left axis, which the right axis correctly reads as 4. **Violins show the
+#|   kernel density of individual respondent ratings** (a measure of
+#|   student-to-student spread), built from the per-rating counts in each
+#|   summary PDF. Lines and points show the mean trend; point size is
+#|   proportional to the number of respondents (also labeled `n=...`), and
+#|   **opacity is proportional to the response rate** (respondents ÷
+#|   enrolled). The three rating items use different Likert anchors and
+#|   aren't directly comparable across panels. The x-axis is treated as
+#|   discrete so the 2018–2022 gap is collapsed.
 
 library(ggplot2)
 library(dplyr)
 library(tidyr)
+library(patchwork)
 
 rds_path <- "data/evals_data.rds"
 if (!file.exists(rds_path)) {
@@ -28,31 +47,60 @@ evals_data <- readRDS(rds_path)
 evals      <- evals_data$summary
 responses  <- evals_data$responses
 
+# Both data sets get a factor year so the 2018–2022 gap is spliced out.
+year_levels    <- as.character(sort(unique(evals$year)))
+evals$year_f   <- factor(as.character(evals$year), levels = year_levels)
+
 # Lift every rating onto the UCLA 9-point axis: 9pt = 1 + (5pt - 1) * 2.
-# Means and SDs were already converted earlier; do the same for the raw
-# UC Davis responses so violins and the summary line live in the same space.
 responses$rating_9 <- ifelse(
   responses$scale_max == 5,
   1 + (responses$rating - 1) * 2,
   responses$rating
 )
-responses <- merge(responses,
-                   evals[, c("year", "role", "response_rate", "n_responses")],
-                   by = c("year", "role"))
+# Expand counts into one row per respondent so geom_violin doesn't take the
+# weighted-quantile code path (which warns "quantiles for weighted data is
+# not implemented").
+responses <- responses %>%
+  uncount(count) %>%
+  mutate(year_f = factor(as.character(year), levels = year_levels)) %>%
+  left_join(evals[, c("year", "role", "response_rate", "n_responses")],
+            by = c("year", "role"))
 
-year_breaks <- sort(unique(evals$year))
 role_colors <- c("UC Davis (Instructor of Record)" = "#2780E3",
                  "UCLA (TA)" = "#E67E22")
 
-# Plot all ratings on the UCLA 9-point scale (left axis). Data stored as
-# 5-point gets stretched: nine_pt = 1 + (five_pt - 1) * 2; SDs scale by 2.
-five_to_nine     <- function(x) 1 + (x - 1) * 2
-nine_to_five     <- function(x) 1 + (x - 1) * 4 / 8
+five_to_nine <- function(x) 1 + (x - 1) * 2
+nine_to_five <- function(x) 1 + (x - 1) * 4 / 8
 
-rating_plot <- function(metric) {
+# patchwork's plot_layout(guides = "collect") only merges guides that are
+# *structurally identical* across plots — including their computed limits.
+# Pin limits/breaks explicitly so the size/alpha legends match.
+n_range <- range(evals$n_responses)
+shared_role_scales <- list(
+  # The fill guide is suppressed because some plots (response rate) don't
+  # have a fill-using geom, which would otherwise prevent patchwork from
+  # merging the Role legend across plots. Color + shape are enough.
+  scale_fill_manual(values = role_colors, guide = "none"),
+  scale_color_manual(values = role_colors, name = "Role",
+                     guide = guide_legend(order = 1)),
+  scale_shape_discrete(name = "Role", guide = guide_legend(order = 1)),
+  scale_size_continuous(
+    range = c(2.5, 5), limits = n_range,
+    breaks = seq(n_range[1], n_range[2]),
+    name = "Respondents", guide = guide_legend(order = 2)
+  ),
+  scale_alpha_continuous(
+    range = c(0.25, 1), limits = c(0, 1),
+    breaks = c(0.25, 0.5, 0.75, 1),
+    labels = scales::percent, name = "Response rate",
+    guide = guide_legend(order = 3, override.aes = list(size = 4))
+  )
+)
+
+rating_plot <- function(metric, title, right_axis_name) {
   resp <- responses[responses$metric == metric, ]
   summ <- data.frame(
-    year          = evals$year,
+    year_f        = evals$year_f,
     role          = evals$role,
     mean_9        = five_to_nine(evals[[metric]]),
     n             = evals$n_responses,
@@ -62,128 +110,82 @@ rating_plot <- function(metric) {
   ggplot() +
     geom_violin(
       data = resp,
-      aes(x = year, y = rating_9, group = interaction(year, role),
-          fill = role, alpha = response_rate, weight = count),
-      width = 1.4, scale = "width", colour = NA, bw = 0.6
+      aes(x = year_f, y = rating_9, group = interaction(year_f, role),
+          fill = role, alpha = response_rate),
+      width = 0.75, scale = "width", colour = NA, bw = 0.6
     ) +
     geom_line(
       data = summ,
-      aes(x = year, y = mean_9, group = role, color = role,
+      aes(x = year_f, y = mean_9, group = role, color = role,
           alpha = response_rate),
       linewidth = 0.8
     ) +
     geom_point(
       data = summ,
-      aes(x = year, y = mean_9, color = role, shape = role,
+      aes(x = year_f, y = mean_9, color = role, shape = role,
           alpha = response_rate, size = n)
     ) +
     geom_label(
       data = summ,
-      aes(x = year, y = mean_9, color = role, label = paste0("n=", n)),
+      aes(x = year_f, y = mean_9, color = role, label = paste0("n=", n)),
       vjust = -0.8, hjust = 0.5, size = 3.2, alpha = 1,
       fill = "white", label.size = 0.3, label.padding = unit(0.15, "lines"),
       label.r = unit(0.1, "lines"), fontface = "bold",
       show.legend = FALSE
     ) +
-    scale_x_continuous(breaks = year_breaks) +
     scale_y_continuous(
       name = "UCLA (9-pt)",
       breaks = 1:9,
-      sec.axis = sec_axis(
-        transform = nine_to_five,
-        name = "UC Davis (5-pt)",
-        breaks = 1:5
-      )
+      sec.axis = sec_axis(transform = nine_to_five,
+                          name = right_axis_name, breaks = 1:5)
     ) +
     coord_cartesian(ylim = c(1, 9), clip = "off") +
-    scale_fill_manual(values = role_colors, name = "Role",
-                      guide = guide_legend(order = 1)) +
-    scale_color_manual(values = role_colors, name = "Role",
-                       guide = guide_legend(order = 1)) +
-    scale_shape_discrete(name = "Role", guide = guide_legend(order = 1)) +
-    scale_size_continuous(range = c(2.5, 5), name = "Respondents",
-                          guide = guide_legend(order = 2)) +
-    scale_alpha_continuous(
-      range = c(0.25, 1), limits = c(0, 1),
-      breaks = c(0.25, 0.5, 0.75, 1),
-      labels = scales::percent,
-      name = "Response rate",
-      guide = guide_legend(order = 3, override.aes = list(size = 4))
-    ) +
-    labs(x = "Year") +
+    shared_role_scales +
+    labs(title = title, x = "Year") +
     theme_minimal() +
     theme(
-      legend.position = "bottom",
-      legend.box = "vertical",
-      plot.margin = margin(t = 18, r = 8, b = 4, l = 4)
+      plot.title = element_text(face = "bold", size = 11),
+      plot.margin = margin(t = 16, r = 8, b = 4, l = 4)
     )
 }
 
 response_rate_plot <- function() {
-  ggplot(evals, aes(x = year, y = response_rate, color = role, shape = role)) +
+  df <- evals %>% transmute(year_f, role, response_rate, n = n_responses)
+  # Response rate isn't mapped to alpha here — the y-axis already shows
+  # it, and dropping alpha from this plot lets patchwork merge the alpha
+  # guide cleanly across the three rating plots.
+  ggplot(df, aes(x = year_f, y = response_rate, color = role, shape = role)) +
     geom_line(aes(group = role), linewidth = 0.8) +
-    geom_point(aes(size = n_responses)) +
-    geom_text(aes(label = paste0("n=", n_responses)),
-              vjust = -1.4, hjust = 0.5, size = 3, show.legend = FALSE) +
-    scale_x_continuous(breaks = year_breaks) +
+    geom_point(aes(size = n)) +
+    geom_label(aes(label = paste0("n=", n)),
+               vjust = -0.8, hjust = 0.5, size = 3.2, alpha = 1,
+               fill = "white", label.size = 0.3,
+               label.padding = unit(0.15, "lines"),
+               label.r = unit(0.1, "lines"), fontface = "bold",
+               show.legend = FALSE) +
     scale_y_continuous(labels = scales::percent, breaks = seq(0, 1, 0.25)) +
     coord_cartesian(ylim = c(0, 1), clip = "off") +
-    scale_size_continuous(range = c(2.5, 5), name = "Respondents",
-                          guide = guide_legend(order = 2)) +
-    scale_color_manual(values = role_colors, name = "Role",
-                       guide = guide_legend(order = 1)) +
-    scale_shape_discrete(name = "Role", guide = guide_legend(order = 1)) +
-    labs(x = "Year", y = "Response rate") +
+    shared_role_scales +
+    labs(title = "Response rate", x = "Year", y = "Respondents ÷ enrolled") +
     theme_minimal() +
     theme(
-      legend.position = "bottom",
-      legend.box = "vertical",
-      plot.margin = margin(t = 18, r = 8, b = 4, l = 4)
+      plot.title = element_text(face = "bold", size = 11),
+      plot.margin = margin(t = 16, r = 8, b = 4, l = 4)
     )
 }
+
+p_overall      <- rating_plot("overall_rating",           "Overall rating",
+                              "UC Davis (1 = Poor … 5 = Excellent)")
+p_instructor   <- rating_plot("instructor_effectiveness", "Instructor effectiveness",
+                              "UC Davis (1 = Poor … 5 = Excellent)")
+p_organization <- rating_plot("course_organization",      "Course well-organized",
+                              "UC Davis (1 = Strongly Disagree … 5 = Strongly Agree)")
+p_response     <- response_rate_plot()
+
+wrap_plots(p_overall, p_instructor, p_organization, p_response,
+           ncol = 2, guides = "collect") &
+  theme(legend.position = "bottom", legend.box = "vertical")
 ```
-
-::: {#fig-evals layout-ncol=2}
-
-```{r}
-#| label: fig-overall
-#| echo: false
-#| fig-width: 7
-#| fig-height: 4
-#| fig-cap: "Overall rating. Left axis: UCLA 9-point (1 = Very Low … 9 = Very High). Right axis: UC Davis 5-point (1 = Poor … 5 = Excellent)."
-rating_plot("overall_rating")
-```
-
-```{r}
-#| label: fig-instructor
-#| echo: false
-#| fig-width: 7
-#| fig-height: 4
-#| fig-cap: "Instructor effectiveness. Left axis: UCLA 9-point (1 = Very Low … 9 = Very High). Right axis: UC Davis 5-point (1 = Poor … 5 = Excellent)."
-rating_plot("instructor_effectiveness")
-```
-
-```{r}
-#| label: fig-organization
-#| echo: false
-#| fig-width: 7
-#| fig-height: 4
-#| fig-cap: "Course was well-organized. Left axis: UCLA 9-point (1 = Very Low … 9 = Very High). Right axis: UC Davis 5-point (1 = Strongly Disagree … 5 = Strongly Agree)."
-rating_plot("course_organization")
-```
-
-```{r}
-#| label: fig-response-rate
-#| echo: false
-#| fig-width: 7
-#| fig-height: 4
-#| fig-cap: "Response rate (respondents ÷ enrolled). No error bars — this is a population proportion, not a sample mean."
-response_rate_plot()
-```
-
-Teaching-evaluation trends over time. The three rating panels share a dual y-axis: the **left axis** is the UCLA TA 9-point Likert scale, the **right axis** is the UC Davis IOR 5-point scale, and the two are linearly aligned. UC Davis responses (originally on the 5-point scale) are stretched onto the 9-point axis so both sets of distributions sit in the same coordinate space — so e.g. a UC Davis rating of 4 plots at 7 on the left axis, which the right axis correctly reads as 4. **Violins show the kernel density of individual respondent ratings** (a measure of student-to-student spread), weighted by their count in the histogram from each summary. Lines and points show the mean trend; point size is proportional to the number of respondents (also labeled `n=...`), and **opacity is proportional to the response rate** (responses ÷ enrolled). The three rating items use different Likert anchors and aren't directly comparable across panels.
-
-:::
 
 ## UC Davis (Instructor of Record)
 

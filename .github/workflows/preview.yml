@@ -55,6 +55,7 @@ jobs:
             any::ggplot2
             any::dplyr
             any::tidyr
+            any::patchwork
 
       - name: Build site
         if: github.event.action != 'closed'
