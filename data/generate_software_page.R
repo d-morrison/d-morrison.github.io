@@ -108,27 +108,44 @@ make_external_table <- function(repos, user) {
 # ---- GitHub API (via gh CLI) ----
 
 fetch_count <- function(repo, state, user) {
-  query <- sprintf("repo:%s is:pr is:%s (author:%s OR assignee:%s)", repo, state, user, user)
+  # Use `involves:` — same qualifier the page links use, so the column
+  # counts will match what users land on when they click through. The
+  # earlier `(author:X OR assignee:X)` form returned 422 Validation
+  # Failed from the GitHub Search API (parens aren't supported by the
+  # API the same way they are by the web UI), so every count came back
+  # 0.
+  query <- sprintf("repo:%s is:pr is:%s involves:%s", repo, state, user)
   url   <- sprintf(
     "search/issues?q=%s&per_page=1",
     utils::URLencode(query, reserved = TRUE)
   )
+  # shQuote the URL because system2 on Linux constructs a shell command
+  # string when redirecting stdout, and an unquoted `&` in the query
+  # string gets interpreted as a shell background operator.
   out <- tryCatch(
-    system2("gh", c("api", url, "--jq", ".total_count"),
+    system2("gh", c("api", shQuote(url), "--jq", ".total_count"),
             stdout = TRUE, stderr = FALSE),
-    error = function(e) NA_character_
+    error = function(e) NA_character_,
+    warning = function(w) NA_character_
   )
-  n <- suppressWarnings(as.integer(out[[1]]))
-  if (is.na(n)) 0L else as.integer(n)
+  # NA = could not query (e.g. private repo our token can't read); the
+  # caller should treat that as "keep prior value" rather than "zero".
+  if (!length(out)) return(NA_integer_)
+  suppressWarnings(as.integer(out[[1]]))
 }
 
 refresh_list <- function(lst, user) {
   lapply(lst, function(r) {
     cat(sprintf("  %s ...\n", r$github))
-    r$merged_prs <- fetch_count(r$github, "merged", user)
+    merged <- fetch_count(r$github, "merged", user)
     Sys.sleep(2)   # GitHub Search API: 30 req/min for auth users = 1 req/2 s
-    r$open_prs   <- fetch_count(r$github, "open",   user)
+    open   <- fetch_count(r$github, "open",   user)
     Sys.sleep(2)
+    # Only overwrite cached values when the API actually returned a
+    # number; NA means the query failed (e.g. private repo) and the
+    # prior cached count is more informative than a zero.
+    if (!is.na(merged)) r$merged_prs <- merged
+    if (!is.na(open))   r$open_prs   <- open
     r
   })
 }

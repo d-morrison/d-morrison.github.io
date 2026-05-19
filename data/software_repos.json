@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-05-13T07:15:04Z",
+  "last_updated": "2026-05-19T08:04:35Z",
   "search_user": "d-morrison",
   "cran_packages": [
     {
@@ -10,10 +10,10 @@
       "cran_label": "CRAN",
       "github": "UCD-SERG/serocalculator",
       "docs_url": "https://ucd-serg.github.io/serocalculator/",
-      "publication_url": null,
-      "publication_label": null,
-      "merged_prs": 198,
-      "open_prs": 8
+      "publication_url": {},
+      "publication_label": {},
+      "merged_prs": 266,
+      "open_prs": 20
     },
     {
       "name": "rwicc",
@@ -25,7 +25,7 @@
       "docs_url": "https://d-morrison.github.io/rwicc/",
       "publication_url": "https://doi.org/10.1111/biom.13472",
       "publication_label": "DOI",
-      "merged_prs": 8,
+      "merged_prs": 18,
       "open_prs": 1
     }
   ],
@@ -34,19 +34,19 @@
       {
         "github": "d-morrison/rmb",
         "description": "Data sets from *Regression Methods in Biostatistics* (Vittinghoff et al.)",
-        "merged_prs": 0,
+        "merged_prs": 8,
         "open_prs": 0
       },
       {
         "github": "d-morrison/snapr",
         "description": "Convenient snapshot testing functions for R packages",
-        "merged_prs": 3,
-        "open_prs": 0
+        "merged_prs": 12,
+        "open_prs": 1
       },
       {
         "github": "d-morrison/pr.helpers",
         "description": "Generalization of pull-request helper functions from `{usethis}`",
-        "merged_prs": 1,
+        "merged_prs": 3,
         "open_prs": 0
       },
       {
@@ -70,7 +70,7 @@
       {
         "github": "ucdavis/rSuStaIn",
         "description": "R implementation of the SuStaIn (Subtype and Stage Inference) algorithm",
-        "merged_prs": 1,
+        "merged_prs": 3,
         "open_prs": 0
       },
       {
@@ -90,52 +90,52 @@
       {
         "github": "d-morrison/slidebreak",
         "description": "Insert slide breaks into Quarto revealjs presentations",
-        "merged_prs": 0,
+        "merged_prs": 2,
         "open_prs": 0
       },
       {
         "github": "d-morrison/revealjs-html-links",
         "description": "Enable HTML-style links in revealjs presentations",
-        "merged_prs": 0,
+        "merged_prs": 2,
         "open_prs": 0
       },
       {
         "github": "d-morrison/div-anchors",
         "description": "Anchors for theorem-variant divs in Quarto",
-        "merged_prs": 0,
+        "merged_prs": 5,
         "open_prs": 0
       },
       {
         "github": "d-morrison/equation-anchors",
         "description": "Anchors for numbered equations in Quarto",
-        "merged_prs": 0,
+        "merged_prs": 3,
         "open_prs": 0
       },
       {
         "github": "d-morrison/qet",
         "description": "Quarto extension template",
-        "merged_prs": 0,
+        "merged_prs": 1,
         "open_prs": 0
       },
       {
         "github": "d-morrison/macros",
         "description": "Shared macro definitions for Quarto documents",
-        "merged_prs": 7,
-        "open_prs": 1
+        "merged_prs": 26,
+        "open_prs": 0
       }
     ],
     "quarto_books_templates": [
       {
         "github": "d-morrison/rme",
         "description": "*Regression Models for Epidemiology* — an open Quarto textbook",
-        "merged_prs": 167,
-        "open_prs": 4
+        "merged_prs": 340,
+        "open_prs": 5
       },
       {
         "github": "d-morrison/qwt",
         "description": "Template for building websites with Quarto",
-        "merged_prs": 6,
-        "open_prs": 0
+        "merged_prs": 35,
+        "open_prs": 3
       }
     ],
     "shiny_applications": [
@@ -148,7 +148,7 @@
       {
         "github": "UCD-SERG/shiny_serocalculator",
         "description": "Shiny app for the `serocalculator` package",
-        "merged_prs": 2,
+        "merged_prs": 3,
         "open_prs": 0
       },
       {
@@ -160,7 +160,7 @@
       {
         "github": "UCLA-PHP/wastewater",
         "description": "Wastewater surveillance dashboard",
-        "merged_prs": 2,
+        "merged_prs": 3,
         "open_prs": 0
       }
     ],
@@ -168,26 +168,26 @@
       {
         "github": "UCD-IDDRC/fxtas",
         "description": "Analysis code for Fragile X-associated tremor/ataxia syndrome (FXTAS)",
-        "merged_prs": 106,
-        "open_prs": 4
+        "merged_prs": 114,
+        "open_prs": 5
       },
       {
         "github": "ucdavis/win",
         "description": "UC Davis WIN (Workforce Inequity in Neuroscience) project",
-        "merged_prs": 3,
-        "open_prs": 0
+        "merged_prs": 38,
+        "open_prs": 1
       },
       {
         "github": "ucdavis/ettbc",
         "description": "Analysis code for enteric disease burden estimation",
-        "merged_prs": 1,
-        "open_prs": 0
+        "merged_prs": 4,
+        "open_prs": 1
       },
       {
         "github": "UCLA-PHP/school.epi.abm",
         "description": "Agent-based model of infection dynamics in K-6 schools during COVID-19",
-        "merged_prs": 2,
-        "open_prs": 0
+        "merged_prs": 4,
+        "open_prs": 1
       },
       {
         "github": "ROBAS-UCLA/Brushing-Behavior",
@@ -243,7 +243,7 @@
     {
       "github": "ajmichaelucd/mic.sim",
       "description": "Simulation of minimum inhibitory concentration (MIC) distributions",
-      "merged_prs": 6,
+      "merged_prs": 7,
       "open_prs": 0
     },
     {
@@ -261,7 +261,7 @@
     {
       "github": "CHOP-CGTInformatics/REDCapTidieR",
       "description": "R package for tidying REDCap exports",
-      "merged_prs": 1,
+      "merged_prs": 2,
       "open_prs": 0
     },
     {
