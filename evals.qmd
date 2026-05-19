@@ -256,7 +256,11 @@ if (is.null(comments) || nrow(comments) == 0) {
 } else {
   # Keep only unambiguously positive comments (see is_positive_comment in
   # extract_evals.R) — qualifiers and critiques are still in the source PDFs.
-  positive <- comments[vapply(comments$comment, is_positive_comment, logical(1)), ]
+  positive <- comments[vapply(
+    seq_len(nrow(comments)),
+    function(i) is_positive_comment(comments$comment[i], comments$role[i]),
+    logical(1)
+  ), ]
 
   if (nrow(positive) == 0) {
     cat("> *No comments matched the positive-highlight filter.*\n")
@@ -264,7 +268,7 @@ if (is.null(comments) || nrow(comments) == 0) {
     # One callout per class (year × course), with each surviving comment
     # as a bullet inside.
     by_class <- split(positive, paste(positive$year, positive$course, sep = "|"))
-    by_class <- by_class[order(vapply(by_class, function(g) g$year[[1]], integer(1)))]
+    by_class <- by_class[order(vapply(by_class, function(g) as.integer(g$year[[1]]), integer(1)))]
 
     for (g in by_class) {
       label <- sprintf("%s — %s", g$year[[1]], g$course[[1]])

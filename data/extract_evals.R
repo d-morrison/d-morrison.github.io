@@ -122,48 +122,51 @@ counts_to_long <- function(counts, metric, year, role, course, scale_max) {
 }
 
 extract_written_comments <- function(text) {
-  # Locate the first line matching a "comments" section header (case-insensitive).
-  # Common UC Davis CFL headers: "Additional Feedback", "Additional Comments",
-  # "Please write any additional comments", "Open-ended responses".
   lines <- strsplit(text, "\n", fixed = TRUE)[[1]]
-  header_idx <- grep(
-    "(?i)(additional (feedback|comments)|open.ended|write.*comment|student.*comment|comment.*section)",
-    lines,
-    perl = TRUE
-  )
+
+  # Find the start of a comments section. Different PDF templates use different
+  # headers:
+  #   - UC Davis older: "Please write any additional comments"
+  #   - UC Davis 2024+: bare "Course Comments." or "Comments."
+  #   - UCLA Class Climate: "4. Comments:" followed by "4.1) Please identify ..."
+  header_re <- "(?i)(additional (feedback|comments)|open.ended|write.*comment|student.*comment|comment.*section|^[[:space:]]*course comments?\\.|^[[:space:]]*[0-9]+\\.[[:space:]]+comments?:|comments report)"
+  header_idx <- grep(header_re, lines, perl = TRUE)
   if (!length(header_idx)) return(character(0))
 
-  comment_lines <- lines[seq(header_idx[[1]] + 1L, length(lines))]
+  start <- header_idx[[1]] + 1L
+  # End at the next "page footer" or "Term  Eval Opened" header that marks
+  # the next section in UC Davis 2024+ summaries.
+  end_re <- "(?i)(Class Climate evaluation|^Term\\s+Eval Opened|^[[:space:]]*Eval Opened|^[[:space:]]*Survey Closed|^[[:space:]]*CRN[[:space:]]+Subject)"
+  end_idx <- grep(end_re, lines, perl = TRUE)
+  end_idx <- end_idx[end_idx > start]
+  end <- if (length(end_idx)) end_idx[[1]] - 1L else length(lines)
 
-  # Collapse runs of blank lines into a single separator, trim whitespace.
-  comment_lines <- trimws(comment_lines)
-  # Remove PDF artefacts: all-caps labels, page numbers/footers, run-on dashes,
-  # and the "Class Climate evaluation … Page N" footer the UCLA PDFs embed.
-  comment_lines <- comment_lines[!grepl("^[A-Z ]{10,}$|^[-=]{3,}$|^[0-9]+$|^Page|Class Climate evaluation", comment_lines)]
-  # Strip embedded prompt fragments that the PDF interleaves with answers
-  # (e.g. "Please provide any additional comments you wish to share about ...").
-  comment_lines <- sub(
-    "(?i)Please (provide|write|share) (any )?additional comments?[^.]*\\. ?",
-    "", comment_lines, perl = TRUE
+  block <- lines[seq(start, end)]
+  block <- block[!grepl("^[[:space:]]*NA[[:space:]]*$", block)]
+  block <- block[!grepl("^[A-Z ]{10,}$|^[-=]{3,}$|^[0-9]+$|^Page|Class Climate evaluation", block)]
+  # Strip lone question-number markers like "4.1)" left by the prompt.
+  block <- sub("^\\s*[0-9]+\\.[0-9]+\\)\\s*$", "", block, perl = TRUE)
+
+  # Join everything into a single string, collapse runs of blank lines into a
+  # single newline, then split on a paragraph boundary defined as
+  # "sentence-end-punctuation + newline + capital-letter". This works for both
+  # UC Davis exports (which separate comments with blank lines) and UCLA
+  # Class Climate exports (which run them together but always start a fresh
+  # line per response).
+  joined <- paste(trimws(block), collapse = "\n")
+  # Strip multi-line prompts that wrap (e.g. UCLA's "Please identify ...
+  # this teaching assistant\nand course."). Match across newlines via (?s).
+  joined <- gsub(
+    "(?is)Please (provide|write|share|identify)[^.]*?\\.\\s*",
+    "", joined, perl = TRUE
   )
+  joined <- gsub("\\n{2,}", "\n", joined, perl = TRUE)
 
-  # Split into individual comments on blank-line boundaries.
-  blank <- which(comment_lines == "")
-  starts <- c(1L, blank + 1L)
-  ends   <- c(blank - 1L, length(comment_lines))
-  valid  <- starts <= ends
-
-  comments <- vapply(
-    which(valid),
-    function(i) paste(comment_lines[starts[i]:ends[i]], collapse = " "),
-    character(1)
-  )
-
-  # Drop very short fragments (artefacts from PDF layout) and anything that
-  # starts mid-sentence (PDF layout sometimes splits one comment across pages
-  # and we capture only the tail — lowercase first letter is the giveaway).
+  chunks <- strsplit(joined, "(?<=[.!?])\\s*\\n(?=[A-Z\"(])", perl = TRUE)[[1]]
+  comments <- gsub("\\s*\\n\\s*", " ", chunks, perl = TRUE)
   comments <- trimws(comments)
   comments <- comments[nchar(comments) >= 20L]
+  # Anything still starting lowercase is a wrap-fragment from the previous page.
   comments <- comments[grepl("^[A-Z\"\\(]", comments)]
   comments
 }
@@ -176,34 +179,75 @@ extract_written_comments <- function(text) {
 positive_cues <- c(
   "awesome", "amazing", "excellent", "fantastic", "wonderful",
   "great", "loved", "love ", "perfect", "best", "outstanding", "incredible",
-  "phenomenal", "appreciate", "appreciated", "engaging", "patient",
-  "knowledgeable", "helpful", "supportive", "approachable", "responsive",
-  "thorough", "valuable", "thank you", "really enjoyed", "enjoyed the",
-  "strong foundation", "well-structured", "well-organized", "very good",
-  "very clear", "very helpful"
+  "phenomenal", "spectacular", "appreciate", "appreciated", "grateful",
+  "engaging", "patient", "knowledgeable", "knows his stuff", "knew his stuff",
+  "helpful", "supportive", "approachable", "responsive", "thorough",
+  "valuable", "thank you", "really enjoyed", "enjoyed the",
+  "strong foundation", "well-structured", "well-organized", "well designed",
+  "well planned", "went beyond", "above and beyond", "genuinely cares",
+  "truly cares", "very good", "very clear", "very helpful",
+  "kind of instructor", "strong instructor", "great instructor",
+  "great professor"
 )
 negative_cues <- c(
-  " but ", " however", " though ", "although", " could have", " should ",
-  " would have", " wish ", " needed ", " lacked", " lack of", " rushed",
-  " rush through", "confusing", "frustrating", "impeded", "boring",
-  " poor ", " bad ", " weak ", "disappointed", "not enough", "too much",
-  "not clear", "wasn't", "didn't", "isn't", "doesn't", "wouldn't",
-  "couldn't", "shouldn't", "problem", " issue", "more material",
-  "less ", "missing", "instead of", "rather than", "n't ",
-  " slow", " slower", "took away", "spent more time", "if he"
+  # Critique / suggestion / hedging markers — any one of these disqualifies
+  # the comment from the public highlights, even if it also contains praise.
+  " but ", " however", " though ", "although",
+  " could have", " could be ", " should ", " would have", " would benefit",
+  " would be helpful", " would be better", " would be great if",
+  " wish ", " needed ", " need more", " need to ",
+  " lacked", " lack of", " rushed", " rush through",
+  "confusing", "frustrating", "impeded", "boring",
+  " poor ", " bad ", " weak ", "disappointed",
+  "not enough", "too much", "too little", "not clear",
+  "wasn't", "didn't", "isn't", "doesn't", "wouldn't",
+  "couldn't", "shouldn't", "n't ",
+  "problem", " issue ", "more material", "less ",
+  "missing", "instead of", "rather than",
+  " slow", " slower", "took away", "spent more time", "if he",
+  # Hedging language used by lukewarm reviewers ("I think he does try...").
+  "i think", "i hope", "i'm sure", "i am sure", "all things considered",
+  "for the most part", "to be fair", "key points were made",
+  "more office hours", "more time", "would benefit from"
 )
 
-is_positive_comment <- function(comment) {
+# Tokens that indicate a comment is about a TA rather than the Instructor of
+# Record. Used only when filtering UC Davis (IOR) highlights — TA praise is
+# kept verbatim under the UCLA (TA) role.
+ta_mention_cues <- c(
+  " ta ", " ta.", " ta!", " ta-", " ta,",
+  " the ta", "a ta ", "great ta", "wonderful ta", "amazing ta",
+  "katy"   # 2025 Epi 204 TA
+)
+
+is_positive_comment <- function(comment, role = NA_character_) {
   # Normalize Unicode curly quotes -> ASCII so "wasn't" etc. matches the
   # cue list (PDF extraction yields right single quotation marks U+2019).
   lc <- tolower(comment)
   lc <- gsub("[‘’]", "'", lc, perl = TRUE)
   lc <- gsub("[“”]", '"', lc, perl = TRUE)
+  # Pad with spaces so word-boundary cues like " bad " match at the ends.
+  lc_padded <- paste0(" ", lc, " ")
+
   has_positive <- any(vapply(positive_cues, grepl, logical(1),
-                             x = lc, fixed = TRUE))
+                             x = lc_padded, fixed = TRUE))
   has_negative <- any(vapply(negative_cues, grepl, logical(1),
-                             x = lc, fixed = TRUE))
-  has_positive && !has_negative
+                             x = lc_padded, fixed = TRUE))
+  if (!has_positive || has_negative) return(FALSE)
+
+  # For IOR comments, drop ones that are clearly *primarily* about the TA —
+  # they belong under the TA-role section if anywhere. A comment that
+  # mentions both the TA and the instructor in roughly equal measure is
+  # kept (e.g. "Both TA and instructor went beyond their way to help us").
+  if (!is.na(role) && role == "UC Davis (Instructor of Record)") {
+    mentions_ta <- any(vapply(ta_mention_cues, grepl, logical(1),
+                              x = lc_padded, fixed = TRUE))
+    mentions_ior <- any(vapply(
+      c("professor", "instructor", "morrison", " dr. ", " he ", " his "),
+      grepl, logical(1), x = lc_padded, fixed = TRUE))
+    if (mentions_ta && !mentions_ior) return(FALSE)
+  }
+  TRUE
 }
 
 extract_uc_davis_eval <- function(path) {
