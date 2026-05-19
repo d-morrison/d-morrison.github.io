@@ -3,7 +3,12 @@ read_pdf_text <- function(path) {
     stop(sprintf("PDF file not found: %s (cwd: %s)", path, getwd()))
   }
 
-  lines <- system2("pdftotext", c("-layout", path, "-"), stdout = TRUE)
+  # stdout = TRUE forces system2 to go through /bin/sh on Linux, which
+  # splits unquoted paths with spaces (every PDF filename here has spaces)
+  # into separate args. shQuote() wraps the path so the shell sees it as
+  # a single token.
+  lines <- system2("pdftotext", c("-layout", shQuote(path), "-"),
+                   stdout = TRUE)
   status <- attr(lines, "status")
 
   if (!is.null(status) && !identical(status, 0L)) {
