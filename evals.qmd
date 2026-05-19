@@ -4,14 +4,11 @@ title: "Teaching Evaluations"
 
 ## Evaluation Trends Over Time
 
-The plot below is generated from evaluation data extracted from the linked PDF summaries.
-
 ```{r}
+#| label: setup-evals
 #| echo: false
 #| message: false
 #| warning: false
-#| fig-width: 8
-#| fig-height: 9
 
 library(ggplot2)
 library(dplyr)
@@ -35,81 +32,102 @@ evals$role <- ifelse(
   "UC Davis (Instructor of Record)"
 )
 
-metric_means <- evals %>%
-  select(year, role, n_responses,
-         overall_rating, instructor_effectiveness, course_organization) %>%
-  pivot_longer(
-    cols = c(overall_rating, instructor_effectiveness, course_organization),
-    names_to = "metric",
-    values_to = "rating"
-  )
-
-metric_sds <- evals %>%
-  select(year, role,
-         overall_rating_sd, instructor_effectiveness_sd, course_organization_sd) %>%
-  pivot_longer(
-    cols = ends_with("_sd"),
-    names_to = "metric",
-    values_to = "sd"
-  ) %>%
-  mutate(metric = sub("_sd$", "", metric))
-
-evals_long <- metric_means %>% left_join(metric_sds, by = c("year", "role", "metric"))
-
-metric_levels <- c("overall_rating", "instructor_effectiveness", "course_organization")
-metric_labels <- c(
-  overall_rating           = "Overall rating\n(1 = Poor … 5 = Excellent)",
-  instructor_effectiveness = "Instructor effectiveness\n(1 = Poor … 5 = Excellent)",
-  course_organization      = "Course was well-organized\n(1 = Strongly Disagree … 5 = Strongly Agree)"
-)
-evals_long$metric <- factor(evals_long$metric, levels = metric_levels, labels = metric_labels)
-
 year_breaks <- sort(unique(evals$year))
+role_colors <- c("UC Davis (Instructor of Record)" = "#2780E3",
+                 "UCLA (TA)" = "#E67E22")
 
-ggplot(evals_long, aes(x = year, y = rating, shape = role, color = role)) +
-  geom_errorbar(
-    aes(ymin = pmax(rating - sd, 1), ymax = pmin(rating + sd, 5)),
-    width = 0.4,
-    linewidth = 0.5,
-    alpha = 0.6
-  ) +
-  geom_line(aes(group = role), linewidth = 0.8) +
-  geom_point(aes(size = n_responses)) +
-  geom_text(
-    aes(label = paste0("n=", n_responses)),
-    vjust = -1.3,
-    hjust = 0.5,
-    size = 3,
-    show.legend = FALSE
-  ) +
-  facet_wrap(~ metric, ncol = 1) +
-  scale_x_continuous(breaks = year_breaks) +
-  scale_y_continuous(limits = c(1, 5), breaks = 1:5) +
-  scale_size_continuous(range = c(2.5, 5), name = "Respondents") +
-  scale_color_manual(values = c("UC Davis (Instructor of Record)" = "#2780E3",
-                                "UCLA (TA)" = "#E67E22")) +
-  labs(
-    x = "Year",
-    y = "Rating (mean ± 1 SD, clipped to scale)",
-    color = "Role",
-    shape = "Role",
-    caption = paste(
-      "Each panel shows a single survey item; items use different Likert anchors and aren't directly comparable.",
-      "UCLA TA evaluations used a 9-point scale (1 = Very Low … 9 = Very High); means and SDs are linearly",
-      "rescaled to the 5-point UC Davis scale shown here. Error bars are clipped to the [1, 5] scale.",
-      sep = "\n"
-    )
-  ) +
-  theme_minimal() +
-  theme(
-    axis.title = element_text(size = 12),
-    axis.text = element_text(size = 10),
-    strip.text = element_text(face = "bold", size = 11),
-    legend.position = "bottom",
-    legend.box = "vertical",
-    plot.caption = element_text(hjust = 0, size = 9)
+rating_plot <- function(metric, ymin_break = 1) {
+  sd_col <- paste0(metric, "_sd")
+  df <- data.frame(
+    year   = evals$year,
+    role   = evals$role,
+    rating = evals[[metric]],
+    sd     = evals[[sd_col]],
+    n      = evals$n_responses
   )
+
+  ggplot(df, aes(x = year, y = rating, color = role, shape = role)) +
+    geom_errorbar(
+      aes(ymin = pmax(rating - sd, 1), ymax = pmin(rating + sd, 5)),
+      width = 0.4, linewidth = 0.5, alpha = 0.6
+    ) +
+    geom_line(aes(group = role), linewidth = 0.8) +
+    geom_point(aes(size = n)) +
+    geom_text(aes(label = paste0("n=", n)),
+              vjust = -1.4, hjust = 0.5, size = 3, show.legend = FALSE) +
+    scale_x_continuous(breaks = year_breaks) +
+    scale_y_continuous(limits = c(1, 5), breaks = ymin_break:5) +
+    scale_size_continuous(range = c(2.5, 5), name = "Respondents",
+                          guide = guide_legend(order = 2)) +
+    scale_color_manual(values = role_colors, name = "Role",
+                       guide = guide_legend(order = 1)) +
+    scale_shape_discrete(name = "Role", guide = guide_legend(order = 1)) +
+    labs(x = "Year", y = "Mean rating") +
+    theme_minimal() +
+    theme(legend.position = "bottom", legend.box = "vertical")
+}
+
+response_rate_plot <- function() {
+  ggplot(evals, aes(x = year, y = response_rate, color = role, shape = role)) +
+    geom_line(aes(group = role), linewidth = 0.8) +
+    geom_point(aes(size = n_responses)) +
+    geom_text(aes(label = paste0("n=", n_responses)),
+              vjust = -1.4, hjust = 0.5, size = 3, show.legend = FALSE) +
+    scale_x_continuous(breaks = year_breaks) +
+    scale_y_continuous(labels = scales::percent, limits = c(0, 1),
+                       breaks = seq(0, 1, 0.25)) +
+    scale_size_continuous(range = c(2.5, 5), name = "Respondents",
+                          guide = guide_legend(order = 2)) +
+    scale_color_manual(values = role_colors, name = "Role",
+                       guide = guide_legend(order = 1)) +
+    scale_shape_discrete(name = "Role", guide = guide_legend(order = 1)) +
+    labs(x = "Year", y = "Response rate") +
+    theme_minimal() +
+    theme(legend.position = "bottom", legend.box = "vertical")
+}
 ```
+
+::: {#fig-evals layout-ncol=1}
+
+```{r}
+#| label: fig-overall
+#| echo: false
+#| fig-width: 7
+#| fig-height: 4
+#| fig-cap: "Overall rating (UC Davis Likert anchors: 1 = Poor, 5 = Excellent)."
+rating_plot("overall_rating")
+```
+
+```{r}
+#| label: fig-instructor
+#| echo: false
+#| fig-width: 7
+#| fig-height: 4
+#| fig-cap: "Instructor effectiveness (UC Davis Likert anchors: 1 = Poor, 5 = Excellent)."
+rating_plot("instructor_effectiveness")
+```
+
+```{r}
+#| label: fig-organization
+#| echo: false
+#| fig-width: 7
+#| fig-height: 4
+#| fig-cap: "Course was well-organized (UC Davis Likert anchors: 1 = Strongly Disagree, 5 = Strongly Agree)."
+rating_plot("course_organization")
+```
+
+```{r}
+#| label: fig-response-rate
+#| echo: false
+#| fig-width: 7
+#| fig-height: 4
+#| fig-cap: "Response rate (respondents ÷ enrolled). No error bars — this is a population proportion, not a sample mean."
+response_rate_plot()
+```
+
+Teaching-evaluation trends over time. In the three rating panels, points show the mean rating and error bars span **±1 standard deviation** of the individual respondent ratings (a measure of student-to-student spread, *not* the standard error of the mean), clipped to the [1, 5] scale. Point size is proportional to the number of respondents (also labeled `n=...`). The three rating items use different Likert anchors and aren't directly comparable across panels. UCLA TA evaluations used a 9-point scale (1 = Very Low … 9 = Very High); both means and SDs are linearly rescaled to the 5-point UC Davis scale.
+
+:::
 
 ## UC Davis (Instructor of Record)
 
