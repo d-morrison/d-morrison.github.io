@@ -13,7 +13,8 @@
       "publication_url": {},
       "publication_label": {},
       "merged_prs": 266,
-      "open_prs": 20
+      "open_prs": 20,
+      "main_commits": null
     },
     {
       "name": "rwicc",
@@ -26,7 +27,8 @@
       "publication_url": "https://doi.org/10.1111/biom.13472",
       "publication_label": "DOI",
       "merged_prs": 18,
-      "open_prs": 1
+      "open_prs": 1,
+      "main_commits": null
     }
   ],
   "my_repos": {
@@ -35,55 +37,64 @@
         "github": "d-morrison/rmb",
         "description": "Data sets from *Regression Methods in Biostatistics* (Vittinghoff et al.)",
         "merged_prs": 8,
-        "open_prs": 0
+        "open_prs": 0,
+        "main_commits": null
       },
       {
         "github": "d-morrison/snapr",
         "description": "Convenient snapshot testing functions for R packages",
         "merged_prs": 12,
-        "open_prs": 1
+        "open_prs": 1,
+        "main_commits": null
       },
       {
         "github": "d-morrison/pr.helpers",
         "description": "Generalization of pull-request helper functions from `{usethis}`",
         "merged_prs": 3,
-        "open_prs": 0
+        "open_prs": 0,
+        "main_commits": null
       },
       {
         "github": "d-morrison/binom.se",
         "description": "Sample size calculations for Bernoulli probability estimation",
         "merged_prs": 0,
-        "open_prs": 0
+        "open_prs": 0,
+        "main_commits": null
       },
       {
         "github": "d-morrison/CSICalc",
         "description": "Methods for estimating incidence from cross-sectional biomarker surveys",
         "merged_prs": 0,
-        "open_prs": 0
+        "open_prs": 0,
+        "main_commits": null
       },
       {
         "github": "d-morrison/ping",
         "description": "Graph ping data in R",
         "merged_prs": 0,
-        "open_prs": 0
+        "open_prs": 0,
+        "main_commits": null
       },
       {
         "github": "ucdavis/rSuStaIn",
         "description": "R implementation of the SuStaIn (Subtype and Stage Inference) algorithm",
         "merged_prs": 3,
-        "open_prs": 0
+        "open_prs": 0,
+        "main_commits": null
       },
       {
         "github": "ucdavis/serodynamics",
         "description": "Modeling longitudinal immune seroresponses to infections",
         "merged_prs": 58,
-        "open_prs": 3
+        "open_prs": 3,
+        "main_commits": null
       },
       {
         "github": "UCLA-PHP/FluView",
         "description": "Flu surveillance data visualization",
         "merged_prs": 9,
-        "open_prs": 0
+        "open_prs": 0,
+        "main_commits": null
       }
     ],
     "quarto_extensions": [
@@ -91,37 +102,43 @@
         "github": "d-morrison/slidebreak",
         "description": "Insert slide breaks into Quarto revealjs presentations",
         "merged_prs": 2,
-        "open_prs": 0
+        "open_prs": 0,
+        "main_commits": null
       },
       {
         "github": "d-morrison/revealjs-html-links",
         "description": "Enable HTML-style links in revealjs presentations",
         "merged_prs": 2,
-        "open_prs": 0
+        "open_prs": 0,
+        "main_commits": null
       },
       {
         "github": "d-morrison/div-anchors",
         "description": "Anchors for theorem-variant divs in Quarto",
         "merged_prs": 5,
-        "open_prs": 0
+        "open_prs": 0,
+        "main_commits": null
       },
       {
         "github": "d-morrison/equation-anchors",
         "description": "Anchors for numbered equations in Quarto",
         "merged_prs": 3,
-        "open_prs": 0
+        "open_prs": 0,
+        "main_commits": null
       },
       {
         "github": "d-morrison/qet",
         "description": "Quarto extension template",
         "merged_prs": 1,
-        "open_prs": 0
+        "open_prs": 0,
+        "main_commits": null
       },
       {
         "github": "d-morrison/macros",
         "description": "Shared macro definitions for Quarto documents",
         "merged_prs": 26,
-        "open_prs": 0
+        "open_prs": 0,
+        "main_commits": null
       }
     ],
     "quarto_books_templates": [
@@ -129,13 +146,15 @@
         "github": "d-morrison/rme",
         "description": "*Regression Models for Epidemiology* — an open Quarto textbook",
         "merged_prs": 340,
-        "open_prs": 5
+        "open_prs": 5,
+        "main_commits": null
       },
       {
         "github": "d-morrison/qwt",
         "description": "Template for building websites with Quarto",
         "merged_prs": 35,
-        "open_prs": 3
+        "open_prs": 3,
+        "main_commits": null
       }
     ],
     "shiny_applications": [
@@ -143,25 +162,29 @@
         "github": "d-morrison/shiny.demos",
         "description": "Teaching demos for Shiny applications",
         "merged_prs": 0,
-        "open_prs": 0
+        "open_prs": 0,
+        "main_commits": null
       },
       {
         "github": "UCD-SERG/shiny_serocalculator",
         "description": "Shiny app for the `serocalculator` package",
         "merged_prs": 3,
-        "open_prs": 0
+        "open_prs": 0,
+        "main_commits": null
       },
       {
         "github": "UCD-SERG/shiny_decay_curve",
         "description": "Shiny app to display antibody decay curves",
         "merged_prs": 1,
-        "open_prs": 1
+        "open_prs": 1,
+        "main_commits": null
       },
       {
         "github": "UCLA-PHP/wastewater",
         "description": "Wastewater surveillance dashboard",
         "merged_prs": 3,
-        "open_prs": 0
+        "open_prs": 0,
+        "main_commits": null
       }
     ],
     "analysis_research_code": [
@@ -169,67 +192,71 @@
         "github": "UCD-IDDRC/fxtas",
         "description": "Analysis code for Fragile X-associated tremor/ataxia syndrome (FXTAS)",
         "merged_prs": 114,
-        "open_prs": 5
+        "open_prs": 5,
+        "main_commits": null
       },
       {
         "github": "ucdavis/win",
         "description": "UC Davis WIN (Workforce Inequity in Neuroscience) project",
         "merged_prs": 38,
-        "open_prs": 1
+        "open_prs": 1,
+        "main_commits": null
       },
       {
         "github": "ucdavis/ettbc",
         "description": "Analysis code for enteric disease burden estimation",
         "merged_prs": 4,
-        "open_prs": 1
+        "open_prs": 1,
+        "main_commits": null
       },
       {
         "github": "UCLA-PHP/school.epi.abm",
         "description": "Agent-based model of infection dynamics in K-6 schools during COVID-19",
         "merged_prs": 4,
-        "open_prs": 1
+        "open_prs": 1,
+        "main_commits": null
       },
       {
         "github": "ROBAS-UCLA/Brushing-Behavior",
         "description": "Longitudinal models of toothbrushing behavior",
         "merged_prs": 3,
-        "open_prs": 0
+        "open_prs": 0,
+        "main_commits": null
       },
       {
         "github": "d-morrison/vax.eff",
         "description": "Code from \"Estimating Vaccine Effectiveness from Linking Population-Based Health Registries\" (Brookmeyer & Morrison, *AJE*, 2022)",
         "merged_prs": 0,
-        "open_prs": 0
+        "open_prs": 0,
+        "main_commits": null
       },
       {
         "github": "d-morrison/LA.Vax.Data",
         "description": "Pre-processes LA County vaccination rates by community statistical area",
         "merged_prs": 0,
-        "open_prs": 0
+        "open_prs": 0,
+        "main_commits": null
       },
       {
         "github": "d-morrison/hybrid.charts.la",
         "description": "Adaptation of Wisconsin COVID-19 data visualizations for Los Angeles County",
         "merged_prs": 0,
-        "open_prs": 0
+        "open_prs": 0,
+        "main_commits": null
       },
       {
         "github": "UCD-SERG/SSudanTyphoidSeroIncidence",
         "description": "Analysis of seroincidence of enteric fever in Juba, South Sudan",
         "merged_prs": 0,
-        "open_prs": 0
+        "open_prs": 0,
+        "main_commits": null
       },
       {
         "github": "d-morrison/EM.examples",
         "description": "Examples of EM algorithms",
         "merged_prs": 0,
-        "open_prs": 0
-      },
-      {
-        "github": "d-morrison/github-stats",
-        "description": "Tools for computing personal GitHub contribution statistics",
-        "merged_prs": 0,
-        "open_prs": 0
+        "open_prs": 0,
+        "main_commits": null
       }
     ]
   },
@@ -238,67 +265,78 @@
       "github": "hadley/mastering-shiny",
       "description": "*Mastering Shiny* book by Hadley Wickham",
       "merged_prs": 9,
-      "open_prs": 0
+      "open_prs": 0,
+      "main_commits": null
     },
     {
       "github": "ajmichaelucd/mic.sim",
       "description": "Simulation of minimum inhibitory concentration (MIC) distributions",
       "merged_prs": 7,
-      "open_prs": 0
+      "open_prs": 0,
+      "main_commits": null
     },
     {
       "github": "ucjug/workshop_julia_basics",
       "description": "UC Davis Julia Users Group introductory workshop materials",
       "merged_prs": 3,
-      "open_prs": 0
+      "open_prs": 0,
+      "main_commits": null
     },
     {
       "github": "sun123zxy/quarto-callouty-theorem",
       "description": "Quarto extension for callout-style theorem environments",
       "merged_prs": 1,
-      "open_prs": 0
+      "open_prs": 0,
+      "main_commits": null
     },
     {
       "github": "CHOP-CGTInformatics/REDCapTidieR",
       "description": "R package for tidying REDCap exports",
       "merged_prs": 2,
-      "open_prs": 0
+      "open_prs": 0,
+      "main_commits": null
     },
     {
       "github": "Nowosad/colorblindcheck",
       "description": "R package for checking colorblind accessibility of color palettes",
       "merged_prs": 1,
-      "open_prs": 0
+      "open_prs": 0,
+      "main_commits": null
     },
     {
       "github": "r-quantities/units",
       "description": "Measurement units for R vectors",
       "merged_prs": 1,
-      "open_prs": 0
+      "open_prs": 0,
+      "main_commits": null
     },
     {
       "github": "r-lib/scales",
       "description": "Scale functions for ggplot2",
       "merged_prs": 1,
-      "open_prs": 0
+      "open_prs": 0,
+      "main_commits": null
     },
     {
       "github": "easystats/parameters",
       "description": "Parameters and statistical summaries for model objects in R",
       "merged_prs": 1,
-      "open_prs": 0
+      "open_prs": 0,
+      "main_commits": null
     },
     {
       "github": "glmmTMB/glmmTMB",
       "description": "Generalized linear mixed models via Template Model Builder",
       "merged_prs": 1,
-      "open_prs": 0
+      "open_prs": 0,
+      "main_commits": null
     },
     {
       "github": "edwindj/ffbase",
       "description": "Base R functions for `ff` large-data objects",
       "merged_prs": 1,
-      "open_prs": 0
+      "open_prs": 0,
+      "main_commits": null
     }
   ]
 }

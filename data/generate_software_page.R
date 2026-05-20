@@ -2,7 +2,7 @@
 # data/generate_software_page.R
 #
 # Reads data/software_repos.json and writes software.qmd.
-# Run with --refresh to fetch current PR counts from the GitHub API
+# Run with --refresh to fetch current PR and commit counts from the GitHub API
 # (requires gh CLI to be installed and authenticated).
 #
 # Usage:
@@ -33,11 +33,28 @@ pr_search_url <- function(repo, state, user) {
   )
 }
 
-# Return a markdown cell: linked number when count > 0, plain "0" otherwise
+# Build the GitHub commits URL filtered to a specific author.
+commits_url <- function(repo, user) {
+  sprintf("https://github.com/%s/commits?author=%s", repo, user)
+}
+
+# Return a markdown cell: linked number when count > 0, plain "0" otherwise,
+# or "—" when count is NULL/NA (not yet fetched).
 pr_cell <- function(count, repo, state, user) {
   count <- count %||% 0L
   if (isTRUE(count == 0)) return("0")
   sprintf("[%d](%s)", as.integer(count), pr_search_url(repo, state, user))
+}
+
+# Return a markdown cell for commit counts.
+# NULL/NA → "—" (not yet fetched); 0 → "0"; N → "[N](link)".
+commit_cell <- function(count, repo, user) {
+  if (is.null(count) || identical(count, "null") || (length(count) == 1 && is.na(count))) {
+    return("—")
+  }
+  count <- as.integer(count)
+  if (isTRUE(count == 0)) return("0")
+  sprintf("[%d](%s)", count, commits_url(repo, user))
 }
 
 # Given a github "owner/repo" string, return the display name:
@@ -57,8 +74,8 @@ pipe_row <- function(...) {
 
 make_cran_table <- function(pkgs, user) {
   header <- pipe_row("Package", "Status", "Description", "CRAN",
-                     "GitHub", "Docs", "Publication", "Merged PRs", "Open PRs")
-  sep    <- "|---------|--------|-------------|------|--------|------|-------------|:----------:|:--------:|"
+                     "GitHub", "Docs", "Publication", "Commits", "Merged PRs", "Open PRs")
+  sep    <- "|---------|--------|-------------|------|--------|------|-------------|:-------:|:----------:|:--------:|"
   rows   <- vapply(pkgs, function(p) {
     cran_cell <- if (!is.null(p$cran_url) && p$cran_url != "null")
       sprintf("[%s](%s)", p$cran_label %||% "CRAN", p$cran_url) else ""
@@ -70,6 +87,7 @@ make_cran_table <- function(pkgs, user) {
     pipe_row(
       p$name, p$status, p$description,
       cran_cell, gh_cell, docs_cell, pub_cell,
+      commit_cell(p$main_commits, p$github, user),
       pr_cell(p$merged_prs, p$github, "merged", user),
       pr_cell(p$open_prs,   p$github, "open",   user)
     )
@@ -78,12 +96,13 @@ make_cran_table <- function(pkgs, user) {
 }
 
 make_repo_table <- function(repos, col1, user) {
-  header <- pipe_row(col1, "Description", "GitHub", "Merged PRs", "Open PRs")
-  sep    <- "|---------|-------------|--------|:----------:|:--------:|"
+  header <- pipe_row(col1, "Description", "GitHub", "Commits", "Merged PRs", "Open PRs")
+  sep    <- "|---------|-------------|--------|:-------:|:----------:|:--------:|"
   rows   <- vapply(repos, function(r) {
     gh_cell <- sprintf("[GitHub](https://github.com/%s)", r$github)
     pipe_row(
       display_name(r$github), r$description, gh_cell,
+      commit_cell(r$main_commits, r$github, user),
       pr_cell(r$merged_prs, r$github, "merged", user),
       pr_cell(r$open_prs,   r$github, "open",   user)
     )
@@ -92,12 +111,13 @@ make_repo_table <- function(repos, col1, user) {
 }
 
 make_external_table <- function(repos, user) {
-  header <- pipe_row("Repository", "Description", "Merged PRs", "Open PRs")
-  sep    <- "|------------|-------------|:----------:|:--------:|"
+  header <- pipe_row("Repository", "Description", "Commits", "Merged PRs", "Open PRs")
+  sep    <- "|------------|-------------|:-------:|:----------:|:--------:|"
   rows   <- vapply(repos, function(r) {
     repo_link <- sprintf("[%s](https://github.com/%s)", r$github, r$github)
     pipe_row(
       repo_link, r$description,
+      commit_cell(r$main_commits, r$github, user),
       pr_cell(r$merged_prs, r$github, "merged", user),
       pr_cell(r$open_prs,   r$github, "open",   user)
     )
@@ -134,18 +154,36 @@ fetch_count <- function(repo, state, user) {
   suppressWarnings(as.integer(out[[1]]))
 }
 
+fetch_commit_count <- function(repo, user) {
+  # Use the contributors endpoint to get the total commit count for the user.
+  # This counts commits to the default branch only.
+  url <- sprintf("repos/%s/contributors?per_page=100&anon=false", repo)
+  jq  <- sprintf('.[] | select(.login == "%s") | .contributions', user)
+  out <- tryCatch(
+    system2("gh", c("api", shQuote(url), "--jq", jq),
+            stdout = TRUE, stderr = FALSE),
+    error = function(e) NA_character_,
+    warning = function(w) NA_character_
+  )
+  if (!length(out) || nchar(trimws(out[[1]])) == 0) return(NA_integer_)
+  suppressWarnings(as.integer(out[[1]]))
+}
+
 refresh_list <- function(lst, user) {
   lapply(lst, function(r) {
     cat(sprintf("  %s ...\n", r$github))
-    merged <- fetch_count(r$github, "merged", user)
+    merged  <- fetch_count(r$github, "merged", user)
     Sys.sleep(2)   # GitHub Search API: 30 req/min for auth users = 1 req/2 s
-    open   <- fetch_count(r$github, "open",   user)
+    open    <- fetch_count(r$github, "open",   user)
     Sys.sleep(2)
+    commits <- fetch_commit_count(r$github, user)
+    Sys.sleep(1)
     # Only overwrite cached values when the API actually returned a
     # number; NA means the query failed (e.g. private repo) and the
     # prior cached count is more informative than a zero.
-    if (!is.na(merged)) r$merged_prs <- merged
-    if (!is.na(open))   r$open_prs   <- open
+    if (!is.na(merged))  r$merged_prs  <- merged
+    if (!is.na(open))    r$open_prs    <- open
+    if (!is.na(commits)) r$main_commits <- commits
     r
   })
 }
@@ -158,7 +196,7 @@ user <- data$search_user %||% "d-morrison"
 # ---- Optionally refresh counts ----
 
 if (do_refresh) {
-  cat("Fetching PR counts from GitHub API (this may take a few minutes)...\n")
+  cat("Fetching PR and commit counts from GitHub API (this may take a few minutes)...\n")
   cat("CRAN packages:\n")
   data$cran_packages                       <- refresh_list(data$cran_packages, user)
   cat("My repos - R Packages:\n")
