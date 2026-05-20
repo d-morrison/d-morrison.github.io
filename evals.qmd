@@ -268,7 +268,8 @@ if (is.null(comments) || nrow(comments) == 0) {
     # One callout per class (year × course), with each surviving comment
     # as a bullet inside.
     by_class <- split(positive, paste(positive$year, positive$course, sep = "|"))
-    by_class <- by_class[order(vapply(by_class, function(g) as.integer(g$year[[1]]), integer(1)))]
+    by_class <- by_class[order(vapply(by_class, function(g) as.integer(g$year[[1]]), integer(1)),
+                                decreasing = TRUE)]
 
     for (g in by_class) {
       label <- sprintf("%s — %s", g$year[[1]], g$course[[1]])
