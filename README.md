@@ -4,28 +4,29 @@ This is the source repository for my personal academic website, built with [Quar
 
 ## Building the Site
 
-To build the website:
+To build the website, you'll need to install the following prerequisites:
 
-```bash
-quarto render
-```
+### Prerequisites
 
-After rendering, you need to copy additional resources:
+1. **Quarto** - Install from [quarto.org](https://quarto.org/docs/get-started/)
+2. **R** - Install from [r-project.org](https://www.r-project.org/)
+3. **poppler** (for PDF text extraction) - Install using your system's package manager:
+   - **Debian/Ubuntu**: `sudo apt-get install -y poppler-utils`
+   - **macOS**: `brew install poppler`
+   - **Windows**: Download from [poppler for Windows](https://blog.alivate.com.au/poppler-windows/)
 
-```bash
-# Copy .nojekyll for GitHub Pages
-cp .nojekyll docs/
+### Build Command
 
-# Copy CV file
-mkdir -p docs/files/CV
-cp static/files/CV/Morrison_CV.pdf docs/files/CV/
-```
-
-Or use the provided script:
+Once prerequisites are installed, run:
 
 ```bash
 ./build.sh
 ```
+
+The build script will:
+1. Extract evaluation data from PDFs (creates `data/evals_data.rds`)
+2. Render the Quarto site
+3. Copy additional resources to the `docs/` directory
 
 ## Development
 

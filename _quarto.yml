@@ -55,3 +55,4 @@ format:
     toc-location: right
     code-copy: true
     code-overflow: wrap
+    lightbox: true
