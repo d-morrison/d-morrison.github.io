@@ -2,6 +2,29 @@
 title: "Teaching Evaluations"
 ---
 
+## UC Davis (Instructor of Record)
+
+### Epi 204
+
+#### 2025
+
+- [Epi 204 Evaluations Summary (2025)](files/evals/evals%20epi%20204%202025%20summary.pdf)
+
+#### 2024
+
+- [Epi 204 Evaluations Summary (2024)](files/evals/Evaluations%20epi%20204%202024%20summary.pdf)
+
+#### 2023
+
+- [Epi 204 Evaluations (Spring 2023)](files/evals/Epi%20204%20Evaluations%20Spring%202023.pdf)
+
+## UCLA (Teaching Assistant)
+
+### Winter 2017
+
+- [Teaching Evaluation 1](files/evals/Morrison%20teaching%20eval%201.pdf)
+- [Teaching Evaluation 2](files/evals/Morrison%20teaching%20eval%202.pdf)
+
 ## Evaluation Trends Over Time
 
 ```{r}
@@ -239,67 +262,3 @@ wrap_plots(p_overall, p_instructor, p_organization,
         legend.direction = "horizontal")
 ```
 
-## Student Feedback Highlights
-
-```{r}
-#| label: comment-highlights
-#| echo: false
-#| message: false
-#| warning: false
-#| results: asis
-
-source("data/extract_evals.R", local = TRUE)
-comments <- evals_data$comments
-
-if (is.null(comments) || nrow(comments) == 0) {
-  cat("> *No written comments were found in the evaluation PDFs.*\n")
-} else {
-  # Keep only unambiguously positive comments (see is_positive_comment in
-  # extract_evals.R) — qualifiers and critiques are still in the source PDFs.
-  positive <- comments[vapply(
-    seq_len(nrow(comments)),
-    function(i) is_positive_comment(comments$comment[i], comments$role[i]),
-    logical(1)
-  ), ]
-
-  if (nrow(positive) == 0) {
-    cat("> *No comments matched the positive-highlight filter.*\n")
-  } else {
-    # One callout per class (year × course), with each surviving comment
-    # as a bullet inside.
-    by_class <- split(positive, paste(positive$year, positive$course, sep = "|"))
-    by_class <- by_class[order(vapply(by_class, function(g) as.integer(g$year[[1]]), integer(1)),
-                                decreasing = TRUE)]
-
-    for (g in by_class) {
-      label <- sprintf("%s — %s", g$year[[1]], g$course[[1]])
-      cat(sprintf("::: {.callout-note icon=false title=\"%s\"}\n", label))
-      for (cmt in g$comment) cat("- ", cmt, "\n", sep = "")
-      cat(":::\n\n")
-    }
-  }
-}
-```
-
-## UC Davis (Instructor of Record)
-
-### Epi 204
-
-#### 2025
-
-- [Epi 204 Evaluations Summary (2025)](files/evals/evals%20epi%20204%202025%20summary.pdf)
-
-#### 2024
-
-- [Epi 204 Evaluations Summary (2024)](files/evals/Evaluations%20epi%20204%202024%20summary.pdf)
-
-#### 2023
-
-- [Epi 204 Evaluations (Spring 2023)](files/evals/Epi%20204%20Evaluations%20Spring%202023.pdf)
-
-## UCLA (Teaching Assistant)
-
-### Winter 2017
-
-- [Teaching Evaluation 1](files/evals/Morrison%20teaching%20eval%201.pdf)
-- [Teaching Evaluation 2](files/evals/Morrison%20teaching%20eval%202.pdf)

@@ -12,6 +12,44 @@ Lecture notes and materials for Epi 204 are available on GitHub:
 
 [View Teaching Evaluations](evals.qmd)
 
+#### Student Feedback Highlights
+
+```{r}
+#| label: epi204-comment-highlights
+#| echo: false
+#| message: false
+#| warning: false
+#| results: asis
+
+source("data/extract_evals.R", local = TRUE)
+rds_path <- "data/evals_data.rds"
+if (file.exists(rds_path)) {
+  evals_data <- readRDS(rds_path)
+  comments <- evals_data$comments
+  if (!is.null(comments) && nrow(comments) > 0) {
+    # Restrict to Epi 204 (this page is the Epi 204 section), then keep
+    # only unambiguously positive feedback. See is_positive_comment() in
+    # data/extract_evals.R for the full cue list.
+    comments <- comments[comments$course == "Epi 204", ]
+    positive <- comments[vapply(
+      seq_len(nrow(comments)),
+      function(i) is_positive_comment(comments$comment[i], comments$role[i]),
+      logical(1)
+    ), ]
+    if (nrow(positive) > 0) {
+      by_year <- split(positive, positive$year)
+      by_year <- by_year[order(as.integer(names(by_year)), decreasing = TRUE)]
+      for (g in by_year) {
+        label <- sprintf("%s", g$year[[1]])
+        cat(sprintf("::: {.callout-note icon=false title=\"%s\"}\n", label))
+        for (cmt in g$comment) cat("- ", cmt, "\n", sep = "")
+        cat(":::\n\n")
+      }
+    }
+  }
+}
+```
+
 ## Presentations
 
 ### Introduction to Causal Inference
