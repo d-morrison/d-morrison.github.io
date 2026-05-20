@@ -24,3 +24,241 @@ title: "Teaching Evaluations"
 
 - [Teaching Evaluation 1](files/evals/Morrison%20teaching%20eval%201.pdf)
 - [Teaching Evaluation 2](files/evals/Morrison%20teaching%20eval%202.pdf)
+
+## Evaluation Trends Over Time
+
+```{r}
+#| label: fig-evals
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-width: 14
+#| fig-height: 10
+#| fig-cap: |
+#|   Teaching-evaluation trends over time. The three rating panels share a dual
+#|   y-axis: the **left axis** is the UCLA TA 9-point Likert scale, the **right
+#|   axis** is the UC Davis IOR 5-point scale, and the two are linearly
+#|   aligned. UC Davis responses (originally on the 5-point scale) are
+#|   stretched onto the 9-point axis so both sets of distributions sit in the
+#|   same coordinate space — e.g. a UC Davis rating of 4 plots at 7 on the
+#|   left axis, which the right axis correctly reads as 4. **Violins show the
+#|   kernel density of individual respondent ratings** (a measure of
+#|   student-to-student spread), built from the per-rating counts in each
+#|   summary PDF. Lines and points show the mean trend; point size is
+#|   proportional to the number of respondents (also labeled `n=...`), and
+#|   **opacity is proportional to the response rate** (respondents ÷
+#|   enrolled). The three rating items use different Likert anchors and
+#|   aren't directly comparable across panels. The x-axis is treated as
+#|   discrete so the 2018–2022 gap is collapsed.
+
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(patchwork)
+
+rds_path <- "data/evals_data.rds"
+if (!file.exists(rds_path)) {
+  stop(
+    "Evaluation data file not found at: ", rds_path, "\n",
+    "Please run the build script to generate it:\n",
+    "  ./build.sh\n",
+    "Or generate it manually:\n",
+    "  Rscript data/build_evals_data.R"
+  )
+}
+evals_data <- readRDS(rds_path)
+evals      <- evals_data$summary
+responses  <- evals_data$responses
+
+# Both data sets get a factor year so the 2018–2022 gap is spliced out.
+year_levels    <- as.character(sort(unique(evals$year)))
+evals$year_f   <- factor(as.character(evals$year), levels = year_levels)
+
+# Order roles in time order (UCLA 2017 first, UC Davis 2023+ second) so the
+# legend reads left-to-right the same way the x-axis does.
+role_levels <- c("UCLA (TA)", "UC Davis (Instructor of Record)")
+evals$role  <- factor(evals$role, levels = role_levels)
+responses$role <- factor(responses$role, levels = role_levels)
+
+# Lift every rating onto the UCLA 9-point axis: 9pt = 1 + (5pt - 1) * 2.
+responses$rating_9 <- ifelse(
+  responses$scale_max == 5,
+  1 + (responses$rating - 1) * 2,
+  responses$rating
+)
+# Expand counts into one row per respondent so geom_violin doesn't take the
+# weighted-quantile code path (which warns "quantiles for weighted data is
+# not implemented"). Join before uncount so the join runs on the 4-row
+# summary, not on the post-expansion ~150-row table.
+responses <- responses %>%
+  left_join(evals[, c("year", "role", "response_rate", "n_responses")],
+            by = c("year", "role")) %>%
+  mutate(year_f = factor(as.character(year), levels = year_levels)) %>%
+  uncount(count)
+
+role_colors <- c("UC Davis (Instructor of Record)" = "#2780E3",
+                 "UCLA (TA)" = "#E67E22")
+
+five_to_nine <- function(x) 1 + (x - 1) * 2
+nine_to_five <- function(x) 1 + (x - 1) * 4 / 8
+
+# patchwork's plot_layout(guides = "collect") only merges guides that are
+# *structurally identical* across plots — including their computed limits.
+# Pin limits/breaks explicitly so the size/alpha legends match.
+n_range <- range(evals$n_responses)
+shared_role_scales <- list(
+  # The fill guide is suppressed because some plots (response rate) don't
+  # have a fill-using geom, which would otherwise prevent patchwork from
+  # merging the Role legend across plots. Color + shape are enough.
+  scale_fill_manual(values = role_colors, guide = "none"),
+  scale_color_manual(values = role_colors, name = "Role",
+                     guide = guide_legend(order = 1)),
+  scale_shape_discrete(name = "Role", guide = guide_legend(order = 1)),
+  scale_size_continuous(
+    range = c(2.5, 5), limits = n_range,
+    breaks = seq(n_range[1], n_range[2]),
+    name = "Respondents", guide = guide_legend(order = 2)
+  ),
+  scale_alpha_continuous(
+    range = c(0.25, 1), limits = c(0, 1),
+    breaks = c(0.25, 0.5, 0.75, 1),
+    labels = scales::percent, name = "Response rate",
+    guide = guide_legend(order = 3, override.aes = list(size = 4))
+  )
+)
+
+rating_plot <- function(metric, title, right_axis_name) {
+  resp <- responses[responses$metric == metric, ]
+  summ <- data.frame(
+    year_f        = evals$year_f,
+    role          = evals$role,
+    mean_9        = five_to_nine(evals[[metric]]),
+    n             = evals$n_responses,
+    response_rate = evals$response_rate
+  )
+
+  ggplot() +
+    geom_violin(
+      data = resp,
+      aes(x = year_f, y = rating_9, group = interaction(year_f, role),
+          fill = role, alpha = response_rate),
+      width = 0.75, scale = "width", colour = NA, bw = 0.6
+    ) +
+    geom_line(
+      data = summ,
+      aes(x = year_f, y = mean_9, group = role, color = role,
+          alpha = response_rate),
+      linewidth = 0.8
+    ) +
+    geom_point(
+      data = summ,
+      aes(x = year_f, y = mean_9, color = role, shape = role,
+          alpha = response_rate, size = n)
+    ) +
+    geom_label(
+      data = summ,
+      aes(x = year_f, y = mean_9, color = role, label = paste0("n=", n)),
+      vjust = -0.8, hjust = 0.5, size = 3.2, alpha = 1,
+      fill = "white", label.size = 0.3, label.padding = unit(0.15, "lines"),
+      label.r = unit(0.1, "lines"), fontface = "bold",
+      show.legend = FALSE
+    ) +
+    scale_y_continuous(
+      name = "UCLA (9-pt)",
+      breaks = 1:9,
+      sec.axis = sec_axis(transform = nine_to_five,
+                          name = right_axis_name, breaks = 1:5)
+    ) +
+    coord_cartesian(ylim = c(1, 9), clip = "off") +
+    shared_role_scales +
+    labs(title = title, x = "Year") +
+    theme_minimal() +
+    theme(
+      plot.title = element_text(face = "bold", size = 11),
+      plot.margin = margin(t = 18, r = 18, b = 14, l = 14),
+      # Color-code each y-axis to match the role whose observations it
+      # natively describes: UCLA (9-pt, orange) on the left, UC Davis
+      # (5-pt, blue) on the right.
+      axis.title.y       = element_text(color = role_colors[["UCLA (TA)"]]),
+      axis.text.y        = element_text(color = role_colors[["UCLA (TA)"]]),
+      axis.ticks.y       = element_line(color = role_colors[["UCLA (TA)"]]),
+      axis.title.y.right = element_text(color = role_colors[["UC Davis (Instructor of Record)"]]),
+      axis.text.y.right  = element_text(color = role_colors[["UC Davis (Instructor of Record)"]]),
+      axis.ticks.y.right = element_line(color = role_colors[["UC Davis (Instructor of Record)"]])
+    )
+}
+
+response_rate_plot <- function() {
+  df <- evals %>% transmute(year_f, role, response_rate, n = n_responses)
+  # Response rate isn't mapped to alpha here — the y-axis already shows
+  # it, and dropping alpha from this plot lets patchwork merge the alpha
+  # guide cleanly across the three rating plots.
+  ggplot(df, aes(x = year_f, y = response_rate, color = role, shape = role)) +
+    geom_line(aes(group = role), linewidth = 0.8) +
+    geom_point(aes(size = n)) +
+    geom_label(aes(label = paste0("n=", n)),
+               vjust = -0.8, hjust = 0.5, size = 3.2, alpha = 1,
+               fill = "white", label.size = 0.3,
+               label.padding = unit(0.15, "lines"),
+               label.r = unit(0.1, "lines"), fontface = "bold",
+               show.legend = FALSE) +
+    scale_y_continuous(labels = scales::percent, breaks = seq(0, 1, 0.25)) +
+    coord_cartesian(ylim = c(0, 1), clip = "off") +
+    shared_role_scales +
+    labs(title = "Response rate", x = "Year", y = "Respondents ÷ enrolled") +
+    theme_minimal() +
+    theme(
+      plot.title = element_text(face = "bold", size = 11),
+      plot.margin = margin(t = 18, r = 18, b = 14, l = 14)
+    )
+}
+
+sample_size_plot <- function() {
+  df <- evals %>% transmute(year_f, role, n = n_responses,
+                            enrollment = round(n_responses / response_rate))
+  enr_max <- max(df$enrollment)
+  ggplot(df, aes(x = year_f, y = n, color = role, shape = role)) +
+    geom_segment(aes(xend = year_f, y = 0, yend = enrollment),
+                 linewidth = 0.4, color = "grey75",
+                 show.legend = FALSE) +
+    geom_point(aes(y = enrollment), shape = 1, size = 3, stroke = 0.7,
+               color = "grey45", show.legend = FALSE) +
+    geom_line(aes(group = role), linewidth = 0.8) +
+    geom_point(aes(size = n)) +
+    geom_label(aes(label = paste0("n=", n)),
+               vjust = -0.8, hjust = 0.5, size = 3.2, alpha = 1,
+               fill = "white", label.size = 0.3,
+               label.padding = unit(0.15, "lines"),
+               label.r = unit(0.1, "lines"), fontface = "bold",
+               show.legend = FALSE) +
+    scale_y_continuous(breaks = scales::pretty_breaks(n = 5)) +
+    coord_cartesian(ylim = c(0, enr_max * 1.05), clip = "off") +
+    shared_role_scales +
+    labs(title = "Sample size", x = "Year",
+         y = "Respondents (filled) vs. enrolled (open)") +
+    theme_minimal() +
+    theme(
+      plot.title = element_text(face = "bold", size = 11),
+      plot.margin = margin(t = 18, r = 18, b = 14, l = 14)
+    )
+}
+
+p_overall      <- rating_plot("overall_rating",           "Overall rating",
+                              "UC Davis (5 = Excellent … 1 = Poor)")
+p_instructor   <- rating_plot("instructor_effectiveness", "Instructor effectiveness",
+                              "UC Davis (5 = Excellent … 1 = Poor)")
+p_organization <- rating_plot("course_organization",      "Course well-organized",
+                              "UC Davis (5 = Strongly Agree … 1 = Strongly Disagree)")
+p_sample       <- sample_size_plot()
+p_response     <- response_rate_plot()
+
+wrap_plots(p_overall, p_instructor, p_organization,
+           p_sample, p_response, guide_area(),
+           ncol = 3, guides = "collect") &
+  theme(legend.box = "vertical",
+        legend.justification = "left",
+        # Role legend laid out horizontally so UCLA (2017) appears on the
+        # left and UC Davis (2023+) on the right, matching the time axis.
+        legend.direction = "horizontal")
+```
+
