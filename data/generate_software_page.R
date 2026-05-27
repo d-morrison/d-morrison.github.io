@@ -1,0 +1,277 @@
+#!/usr/bin/env Rscript
+# data/generate_software_page.R
+#
+# Reads data/software_repos.json and writes software.qmd.
+# Run with --refresh to fetch current PR and commit counts from the GitHub API
+# (requires gh CLI to be installed and authenticated).
+#
+# Usage:
+#   Rscript data/generate_software_page.R            # Use cached counts
+#   Rscript data/generate_software_page.R --refresh  # Fetch live counts
+
+suppressPackageStartupMessages(library(jsonlite))
+
+args      <- commandArgs(trailingOnly = TRUE)
+do_refresh <- "--refresh" %in% args
+
+data_file   <- "data/software_repos.json"
+output_file <- "software.qmd"
+
+# ---- Helpers ----
+
+`%||%` <- function(a, b) if (!is.null(a) && !identical(a, "null")) a else b
+
+# Build the GitHub PR search URL for a repo + state.
+# Uses the global search endpoint with involves: which reliably captures
+# PRs where the user is author or assignee (including AI-assisted PRs).
+pr_search_url <- function(repo, state, user) {
+  # repo is "owner/name"; encode the slash as %2F for the repo: qualifier
+  encoded_repo <- gsub("/", "%2F", repo, fixed = TRUE)
+  sprintf(
+    "https://github.com/search?q=repo%%3A%s+is%%3Apr+is%%3A%s+involves%%3A%s&type=pullrequests",
+    encoded_repo, state, user
+  )
+}
+
+# Build the GitHub commits URL filtered to a specific author.
+commits_url <- function(repo, user) {
+  sprintf("https://github.com/%s/commits?author=%s", repo, user)
+}
+
+# Return a markdown cell: linked number when count > 0, plain "0" otherwise,
+# or "—" when count is NULL/NA (not yet fetched).
+pr_cell <- function(count, repo, state, user) {
+  count <- count %||% 0L
+  if (isTRUE(count == 0)) return("0")
+  sprintf("[%d](%s)", as.integer(count), pr_search_url(repo, state, user))
+}
+
+# Return a markdown cell for commit counts.
+# NULL/NA → "—" (not yet fetched); 0 → "0"; N → "[N](link)".
+commit_cell <- function(count, repo, user) {
+  if (is.null(count) || identical(count, "null") || (length(count) == 1 && is.na(count))) {
+    return("—")
+  }
+  count <- as.integer(count)
+  if (isTRUE(count == 0)) return("0")
+  sprintf("[%d](%s)", count, commits_url(repo, user))
+}
+
+# Given a github "owner/repo" string, return the display name:
+# just the repo name for personal repos, "org/repo" for org repos
+display_name <- function(github_slug, personal = "d-morrison") {
+  parts <- strsplit(github_slug, "/", fixed = TRUE)[[1]]
+  if (parts[[1]] == personal) parts[[2]] else github_slug
+}
+
+# Assemble a pipe-table row
+pipe_row <- function(...) {
+  cells <- c(...)
+  paste0("| ", paste(cells, collapse = " | "), " |")
+}
+
+# ---- Table generators ----
+
+make_cran_table <- function(pkgs, user) {
+  header <- pipe_row("Package", "Status", "Description", "CRAN",
+                     "GitHub", "Docs", "Publication", "Commits", "Merged PRs", "Open PRs")
+  sep    <- "|---------|--------|-------------|------|--------|------|-------------|:-------:|:----------:|:--------:|"
+  rows   <- vapply(pkgs, function(p) {
+    cran_cell <- if (!is.null(p$cran_url) && p$cran_url != "null")
+      sprintf("[%s](%s)", p$cran_label %||% "CRAN", p$cran_url) else ""
+    gh_cell   <- sprintf("[GitHub](https://github.com/%s)", p$github)
+    docs_cell <- if (!is.null(p$docs_url) && p$docs_url != "null")
+      sprintf("[Docs](%s)", p$docs_url) else ""
+    pub_cell  <- if (!is.null(p$publication_url) && p$publication_url != "null")
+      sprintf("[%s](%s)", p$publication_label %||% "DOI", p$publication_url) else ""
+    pipe_row(
+      p$name, p$status, p$description,
+      cran_cell, gh_cell, docs_cell, pub_cell,
+      commit_cell(p$main_commits, p$github, user),
+      pr_cell(p$merged_prs, p$github, "merged", user),
+      pr_cell(p$open_prs,   p$github, "open",   user)
+    )
+  }, character(1))
+  paste(c(header, sep, rows), collapse = "\n")
+}
+
+make_repo_table <- function(repos, col1, user) {
+  header <- pipe_row(col1, "Description", "GitHub", "Commits", "Merged PRs", "Open PRs")
+  sep    <- "|---------|-------------|--------|:-------:|:----------:|:--------:|"
+  rows   <- vapply(repos, function(r) {
+    gh_cell <- sprintf("[GitHub](https://github.com/%s)", r$github)
+    pipe_row(
+      display_name(r$github), r$description, gh_cell,
+      commit_cell(r$main_commits, r$github, user),
+      pr_cell(r$merged_prs, r$github, "merged", user),
+      pr_cell(r$open_prs,   r$github, "open",   user)
+    )
+  }, character(1))
+  paste(c(header, sep, rows), collapse = "\n")
+}
+
+make_external_table <- function(repos, user) {
+  header <- pipe_row("Repository", "Description", "Commits", "Merged PRs", "Open PRs")
+  sep    <- "|------------|-------------|:-------:|:----------:|:--------:|"
+  rows   <- vapply(repos, function(r) {
+    repo_link <- sprintf("[%s](https://github.com/%s)", r$github, r$github)
+    pipe_row(
+      repo_link, r$description,
+      commit_cell(r$main_commits, r$github, user),
+      pr_cell(r$merged_prs, r$github, "merged", user),
+      pr_cell(r$open_prs,   r$github, "open",   user)
+    )
+  }, character(1))
+  paste(c(header, sep, rows), collapse = "\n")
+}
+
+# ---- GitHub API (via gh CLI) ----
+
+fetch_count <- function(repo, state, user) {
+  # Use `involves:` — same qualifier the page links use, so the column
+  # counts will match what users land on when they click through. The
+  # earlier `(author:X OR assignee:X)` form returned 422 Validation
+  # Failed from the GitHub Search API (parens aren't supported by the
+  # API the same way they are by the web UI), so every count came back
+  # 0.
+  query <- sprintf("repo:%s is:pr is:%s involves:%s", repo, state, user)
+  url   <- sprintf(
+    "search/issues?q=%s&per_page=1",
+    utils::URLencode(query, reserved = TRUE)
+  )
+  # shQuote the URL because system2 on Linux constructs a shell command
+  # string when redirecting stdout, and an unquoted `&` in the query
+  # string gets interpreted as a shell background operator.
+  out <- tryCatch(
+    system2("gh", c("api", shQuote(url), "--jq", ".total_count"),
+            stdout = TRUE, stderr = FALSE),
+    error = function(e) NA_character_,
+    warning = function(w) NA_character_
+  )
+  # NA = could not query (e.g. private repo our token can't read); the
+  # caller should treat that as "keep prior value" rather than "zero".
+  if (!length(out)) return(NA_integer_)
+  suppressWarnings(as.integer(out[[1]]))
+}
+
+fetch_commit_count <- function(repo, user) {
+  # Use the contributors endpoint to get the total commit count for the user.
+  # This counts commits to the default branch only.
+  url <- sprintf("repos/%s/contributors?per_page=100&anon=false", repo)
+  jq  <- sprintf('.[] | select(.login == "%s") | .contributions', user)
+  out <- tryCatch(
+    system2("gh", c("api", shQuote(url), "--jq", jq),
+            stdout = TRUE, stderr = FALSE),
+    error = function(e) NA_character_,
+    warning = function(w) NA_character_
+  )
+  if (!length(out) || nchar(trimws(out[[1]])) == 0) return(NA_integer_)
+  suppressWarnings(as.integer(out[[1]]))
+}
+
+refresh_list <- function(lst, user) {
+  lapply(lst, function(r) {
+    cat(sprintf("  %s ...\n", r$github))
+    merged  <- fetch_count(r$github, "merged", user)
+    Sys.sleep(2)   # GitHub Search API: 30 req/min for auth users = 1 req/2 s
+    open    <- fetch_count(r$github, "open",   user)
+    Sys.sleep(2)
+    commits <- fetch_commit_count(r$github, user)
+    Sys.sleep(1)
+    # Only overwrite cached values when the API actually returned a
+    # number; NA means the query failed (e.g. private repo) and the
+    # prior cached count is more informative than a zero.
+    if (!is.na(merged))  r$merged_prs  <- merged
+    if (!is.na(open))    r$open_prs    <- open
+    if (!is.na(commits)) r$main_commits <- commits
+    r
+  })
+}
+
+# ---- Load data ----
+
+data <- fromJSON(data_file, simplifyVector = FALSE)
+user <- data$search_user %||% "d-morrison"
+
+# ---- Optionally refresh counts ----
+
+if (do_refresh) {
+  cat("Fetching PR and commit counts from GitHub API (this may take a few minutes)...\n")
+  cat("CRAN packages:\n")
+  data$cran_packages                       <- refresh_list(data$cran_packages, user)
+  cat("My repos - R Packages:\n")
+  data$my_repos$r_packages                 <- refresh_list(data$my_repos$r_packages, user)
+  cat("My repos - Quarto Extensions:\n")
+  data$my_repos$quarto_extensions          <- refresh_list(data$my_repos$quarto_extensions, user)
+  cat("My repos - Quarto Books & Templates:\n")
+  data$my_repos$quarto_books_templates     <- refresh_list(data$my_repos$quarto_books_templates, user)
+  cat("My repos - Shiny Applications:\n")
+  data$my_repos$shiny_applications         <- refresh_list(data$my_repos$shiny_applications, user)
+  cat("My repos - Analysis & Research Code:\n")
+  data$my_repos$analysis_research_code     <- refresh_list(data$my_repos$analysis_research_code, user)
+  cat("External contributions:\n")
+  data$external_contributions              <- refresh_list(data$external_contributions, user)
+
+  data$last_updated <- format(Sys.time(), "%Y-%m-%dT%H:%M:%SZ", tz = "UTC")
+  writeLines(toJSON(data, pretty = TRUE, auto_unbox = TRUE), data_file)
+  cat(sprintf("Saved %s\n", data_file))
+}
+
+# ---- Generate software.qmd ----
+
+lines <- c(
+  "---",
+  'title: "Software"',
+  "---",
+  "",
+  "<!-- This file is auto-generated by data/generate_software_page.R -->",
+  sprintf("<!-- Last updated: %s -->", data$last_updated %||% "unknown"),
+  "",
+  "## R Packages on CRAN",
+  "",
+  make_cran_table(data$cran_packages, user),
+  "",
+  "---",
+  "",
+  "## My Repositories",
+  "",
+  paste0(
+    "Repositories under my personal GitHub account, the ",
+    "[UCD-SERG](https://github.com/UCD-SERG) organization, and other organizations ",
+    "where I am an author or maintainer."
+  ),
+  "",
+  "### R Packages",
+  "",
+  make_repo_table(data$my_repos$r_packages, "Package", user),
+  "",
+  "### Quarto Extensions",
+  "",
+  make_repo_table(data$my_repos$quarto_extensions, "Extension", user),
+  "",
+  "### Quarto Books & Templates",
+  "",
+  make_repo_table(data$my_repos$quarto_books_templates, "Project", user),
+  "",
+  "### Shiny Applications",
+  "",
+  make_repo_table(data$my_repos$shiny_applications, "App", user),
+  "",
+  "### Analysis & Research Code",
+  "",
+  make_repo_table(data$my_repos$analysis_research_code, "Repo", user),
+  "",
+  "---",
+  "",
+  "## External Contributions",
+  "",
+  paste0(
+    "Pull requests I have authored or been assigned to in repositories outside ",
+    "my own accounts, ordered by number of merged PRs."
+  ),
+  "",
+  make_external_table(data$external_contributions, user)
+)
+
+writeLines(lines, output_file)
+cat(sprintf("Generated %s\n", output_file))

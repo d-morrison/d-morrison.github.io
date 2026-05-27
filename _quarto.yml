@@ -22,6 +22,8 @@ website:
         href: index.qmd
       - text: "Publications"
         href: publications.qmd
+      - text: "Software"
+        href: software.qmd
       - text: "Projects"
         href: projects.qmd
       - text: "Blog"
