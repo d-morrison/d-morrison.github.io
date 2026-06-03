@@ -54,6 +54,10 @@ but nothing more.
 
 ## Procedure
 
+Steps 1–7 are language-agnostic — the general pattern works for any stack.
+The R/Quarto-specific commands and tooling are in the section further below;
+extract just the general steps if you're working in a different language.
+
 1. **Hypothesize the minimal trigger.** What is the smallest combination of
    data + operation you believe causes the phenomenon?
 2. **Create a standalone scratch file** outside the repo tree (e.g.
@@ -113,15 +117,22 @@ but nothing more.
   - `std_out_err = TRUE` — capture stdout/stderr too (e.g. `system()` /
     subprocess or C-level output that doesn't come back as normal R results).
   - `wd =` — set the working directory when the code needs one.
+  - `advertise = FALSE` — drop the "Created on … with reprex v…" footer, for a
+    minimal bug report or upstream issue where that line is just noise.
   - Validation bonus: because `reprex()` runs in a fresh session, if it errors
     on a missing object or package, your example wasn't actually
     self-contained — fix that before sharing.
 
   Companion helpers handle "wild-caught" reprexes (all exported in reprex
-  2.x): `reprex_clean()` (strip the `#>` output markers from a rendered/pasted
-  reprex, leaving runnable code), `reprex_rescue()` (recover code from
-  R-console output with `>`/`+` prompts), and `reprex_invert()` (the inverse
-  of `reprex()` — recover the input code from a rendered reprex).
+  2.x): `reprex_clean()` (strip the `#>`-prefixed output lines from a
+  rendered/pasted reprex, leaving only the code lines), `reprex_rescue()`
+  (recover code from R-console output with `>`/`+` prompts), and
+  `reprex_invert()` (the inverse of `reprex()` — recover the source input by
+  dropping all rendered output). `reprex_clean()` and `reprex_invert()` are
+  close cousins: both end up with runnable code from a rendered reprex.
+  `reprex_clean()` simply deletes the `#>` output lines from the text you give
+  it, whereas `reprex_invert()` round-trips a full `reprex()` render back to
+  its source script.
 - When the bug might be **version-dependent**, capture `sessionInfo()` (or set
   `session_info = TRUE` above) in the reprex so versions are part of the
   record. If you suspect *stale* packages are the cause,
