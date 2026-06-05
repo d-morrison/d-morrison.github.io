@@ -1,0 +1,34 @@
+---
+title: "snapr is now on CRAN!"
+description: "Announcing the CRAN release of snapr, an R package providing convenient snapshot testing functions for R package developers."
+author: "Douglas Ezra Morrison"
+date: "2026-06-05"
+categories: [R, packages, testing, CRAN]
+---
+
+I'm excited to announce that [snapr](https://cran.r-project.org/package=snapr) is now available on CRAN!
+
+## What is snapr?
+
+`snapr` provides convenient snapshot testing functions for R packages. Snapshot tests (also called "golden tests") work by saving the output of a function call to a file on the first run, then comparing subsequent runs against that saved snapshot. This makes it easy to detect unintended changes in function output.
+
+## Installation
+
+You can install snapr from CRAN:
+
+```r
+install.packages("snapr")
+```
+
+Or install the development version from GitHub:
+
+```r
+# install.packages("pak")
+pak::pak("d-morrison/snapr")
+```
+
+## Resources
+
+- [CRAN page](https://cran.r-project.org/package=snapr)
+- [GitHub repository](https://github.com/d-morrison/snapr)
+- [Package documentation](https://d-morrison.github.io/snapr/)
