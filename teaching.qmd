@@ -8,7 +8,7 @@ title: "Teaching"
 
 Lecture notes and materials for Epi 204 are available on GitHub:
 
-- [Epi 204 Lecture Notes Repository](https://github.com/d-morrison/rme)
+- [Epi 204 Lecture Notes Repository](https://d-morrison.github.io/rme/)
 
 [View Teaching Evaluations](evals.qmd)
 
