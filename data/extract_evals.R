@@ -136,7 +136,7 @@ extract_written_comments <- function(text) {
   start <- header_idx[[1]] + 1L
   # End at the next "page footer" or "Term  Eval Opened" header that marks
   # the next section in UC Davis 2024+ summaries.
-  end_re <- "(?i)(Class Climate evaluation|^Term\\s+Eval Opened|^[[:space:]]*Eval Opened|^[[:space:]]*Survey Closed|^[[:space:]]*CRN[[:space:]]+Subject)"
+  end_re <- "(?i)(Class Climate evaluation|^[[:space:]]*Term\\s+Eval Opened|^[[:space:]]*Eval Opened|^[[:space:]]*Survey Closed|^[[:space:]]*CRN[[:space:]]+Subject)"
   end_idx <- grep(end_re, lines, perl = TRUE)
   end_idx <- end_idx[end_idx > start]
   end <- if (length(end_idx)) end_idx[[1]] - 1L else length(lines)
@@ -205,6 +205,7 @@ negative_cues <- c(
   "problem", " issue ", "more material", "less ",
   "missing", "instead of", "rather than",
   " slow", " slower", "took away", "spent more time", "if he",
+  "suggestion", "difficult", " trouble", "recommend he", "recommend him",
   # Hedging language used by lukewarm reviewers ("I think he does try...").
   "i think", "i hope", "i'm sure", "i am sure", "all things considered",
   "for the most part", "to be fair", "key points were made",
@@ -384,7 +385,8 @@ extract_evals_data <- function(base_dir = file.path("static", "files", "evals"))
     c(
       "Epi 204 Evaluations Spring 2023.pdf",
       "Evaluations epi 204 2024 summary.pdf",
-      "evals epi 204 2025 summary.pdf"
+      "evals epi 204 2025 summary.pdf",
+      "evals epi 204 2026 summary.pdf"
     )
   )
   ucla_paths <- file.path(
