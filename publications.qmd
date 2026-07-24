@@ -4,17 +4,47 @@ title: "Publications"
 
 ## Journal Articles
 
-### 2021
+### 2026
+
+**Use of the Behavioral Dyscontrol Scale-2 (BDS-2) to measure executive dysfunction in FXTAS**  
+Seyedeh Ala Mokhtabad Amrei, Hasan Hasan, Ellery Santos, Hazel Maridith Barlahan Biag, Andrea Schneider, Jun Yi Wang, David R. Hessl, Flora Tassone, Douglas Ezra Morrison, Kyoungmi Kim, Randi J. Hagerman  
+*Frontiers in Molecular Neuroscience*, 2026  
+[DOI](https://doi.org/10.3389/fnmol.2026.1826779)
+
+### 2025
+
+**Progression of fragile X-associated tremor/ataxia syndrome revealed by subtype and stage inference**  
+Douglas Ezra Morrison, M. P. Ponzini, Ellery R. Santos, Hazel Maridith Barlahan Biag, G. Espinal, Flora Tassone, S. M. Rivera, David Hessl, Andrea Schneider, J. A. Bourgeois, A. Hagerman, Kyoungmi Kim  
+*Brain Communications*, 2025  
+[DOI](https://doi.org/10.1093/braincomms/fcaf483)
+
+### 2023
+
+**Modeling COVID-19 infection dynamics and mitigation strategies for in-person K-6 instruction**  
+Douglas Ezra Morrison, Roch Nianogo, Vladimir Manuel, Onyebuchi Arah, Nathaniel Anderson, Tony Kuo, Moira Inkelas  
+*Frontiers in Public Health*, 2023  
+[DOI](https://doi.org/10.3389/fpubh.2023.856940)
+
+### 2022
+
+**A naturalistic study of brushing patterns using powered toothbrushes**  
+M. Essalat, Douglas Morrison, S. Kak, E. Chang, I. Roig Penso, R. Kulchar, O. Madrid Padilla, Vivek Shetty  
+*PLoS One*, 2022  
+[DOI](https://doi.org/10.1371/journal.pone.0263638)
 
 **Regression with interval-censored covariates: Application to cross-sectional incidence estimation**  
 Douglas Ezra Morrison, Oliver Laeyendecker, Ron Brookmeyer  
-*Biometrics*, 2021  
+*Biometrics*, 2022  
 [DOI](https://doi.org/10.1111/biom.13472) | [Code](https://github.com/d-morrison/rwicc) | [Project](https://d-morrison.github.io/rwicc)
 
-**Modeling infection dynamics and mitigation strategies to support K-6 in-person instruction during the COVID-19 pandemic**  
-Douglas Ezra Morrison, Roch Nianogo, Vladimir Manuel, Onyebuchi Arah, Nathaniel Anderson, Tony Kuo, Moira Inkelas  
-*medRxiv* (Preprint), 2021  
-[DOI](https://doi.org/10.1101/2021.02.27.21252535)
+**Estimating Vaccine Effectiveness from Linking Population-Based Health Registries: Some Sources of Bias**  
+Ron Brookmeyer, Douglas Ezra Morrison  
+*American Journal of Epidemiology*, 2022  
+[DOI](https://doi.org/10.1093/aje/kwac145)
+
+**Evaluation of multi-assay algorithms for cross-sectional HIV incidence estimation in settings with universal antiretroviral treatment**  
+W. Grant-McAuley, Oliver Laeyendecker, D. Monaco, A. Chen, S. E. Hudelson, E. Klock, Ron Brookmeyer, Douglas Ezra Morrison, E. Piwowar-Manning, C. S. Morrison, R. Hayes  
+*BMC Infectious Diseases*, 2022;22(1):1
 
 ### 2020
 
