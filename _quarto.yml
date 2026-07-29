@@ -3,6 +3,7 @@ project:
   output-dir: docs
   render:
     - "*.qmd"
+    - "posts/**/*.qmd"
     - "!themes/"
     - "!content/"
     - "!archetypes/"

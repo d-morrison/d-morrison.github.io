@@ -17,6 +17,20 @@
       "main_commits": null
     },
     {
+      "name": "snapr",
+      "status": "Active",
+      "description": "Convenient snapshot testing functions for R packages",
+      "cran_url": "https://cran.r-project.org/package=snapr",
+      "cran_label": "CRAN",
+      "github": "d-morrison/snapr",
+      "docs_url": "https://d-morrison.github.io/snapr/",
+      "publication_url": {},
+      "publication_label": {},
+      "merged_prs": 12,
+      "open_prs": 1,
+      "main_commits": null
+    },
+    {
       "name": "rwicc",
       "status": "Archived",
       "description": "Regression with interval-censored covariates",
@@ -38,13 +52,6 @@
         "description": "Data sets from *Regression Methods in Biostatistics* (Vittinghoff et al.)",
         "merged_prs": 8,
         "open_prs": 0,
-        "main_commits": null
-      },
-      {
-        "github": "d-morrison/snapr",
-        "description": "Convenient snapshot testing functions for R packages",
-        "merged_prs": 12,
-        "open_prs": 1,
         "main_commits": null
       },
       {
