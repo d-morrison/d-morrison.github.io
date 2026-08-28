@@ -12,7 +12,7 @@ project:
 website:
   title: "Douglas Ezra Morrison"
   # site-url: "https://d-morrison.github.io/" # Commented out to support PR previews in subdirectories
-  description: "Personal website of Douglas Ezra Morrison, Assistant Professor of Biostatistics at UC Davis"
+  description: "Personal website of Douglas Ezra Morrison, Assistant Professor of Computer Science at Western Washington University"
   
   navbar:
     background: primary
@@ -39,7 +39,7 @@ website:
         href: https://github.com/d-morrison
         aria-label: "GitHub"
       - icon: envelope
-        href: mailto:demorrison@ucdavis.edu
+        href: mailto:morri313@wwu.edu
         aria-label: "Email"
         
   page-footer:
