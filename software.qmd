@@ -47,8 +47,8 @@ Repositories under my personal GitHub account, the [UCD-SERG](https://github.com
 
 | Project | Description | GitHub | Commits | Merged PRs | Open PRs |
 |---------|-------------|--------|:-------:|:----------:|:--------:|
-| rme | *Regression Models for Epidemiology* — an open Quarto textbook | [GitHub](https://github.com/d-morrison/rme) | — | [340](https://github.com/search?q=repo%3Ad-morrison%2Frme+is%3Apr+is%3Amerged+involves%3Ad-morrison&type=pullrequests) | [5](https://github.com/search?q=repo%3Ad-morrison%2Frme+is%3Apr+is%3Aopen+involves%3Ad-morrison&type=pullrequests) |
-| qwt | Template for building websites with Quarto | [GitHub](https://github.com/d-morrison/qwt) | — | [35](https://github.com/search?q=repo%3Ad-morrison%2Fqwt+is%3Apr+is%3Amerged+involves%3Ad-morrison&type=pullrequests) | [3](https://github.com/search?q=repo%3Ad-morrison%2Fqwt+is%3Apr+is%3Aopen+involves%3Ad-morrison&type=pullrequests) |
+| rme | *Regression Models for Epidemiology* — an open Quarto textbook | [GitHub](https://github.com/Morrison-Lab/rme) | — | [340](https://github.com/search?q=repo%3AMorrison-Lab%2Frme+is%3Apr+is%3Amerged+involves%3Ad-morrison&type=pullrequests) | [5](https://github.com/search?q=repo%3AMorrison-Lab%2Frme+is%3Apr+is%3Aopen+involves%3Ad-morrison&type=pullrequests) |
+| qwt | Template for building websites with Quarto | [GitHub](https://github.com/Morrison-Lab/qwt) | — | [35](https://github.com/search?q=repo%3AMorrison-Lab%2Fqwt+is%3Apr+is%3Amerged+involves%3Ad-morrison&type=pullrequests) | [3](https://github.com/search?q=repo%3AMorrison-Lab%2Fqwt+is%3Apr+is%3Aopen+involves%3Ad-morrison&type=pullrequests) |
 
 ### Shiny Applications
 

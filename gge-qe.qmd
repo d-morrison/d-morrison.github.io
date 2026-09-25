@@ -32,7 +32,7 @@ You will need to provide a formal written proposal ahead of the exam (the GGE gr
 - The proposal should contain complete drafts of the introduction and methods sections for each chapter of your dissertation, as well as expected results sections, ideally including mock-up tables and graphs.
 - The discussion section is mostly not possible to draft at the proposal stage (prior to completing the results), except for the limitations section, which you should include.
 - Your methods sections should include directed acyclic graphs (DAGs) or similar diagrams to illustrate the study design and data-generating process.
-- You should explicitly define your [estimands](https://d-morrison.github.io/rme/estimation.html#def-estimand).
+- You should explicitly define your [estimands](https://morrison-lab.github.io/rme/estimation.html#def-estimand).
 - You should explicitly define a set of formal mathematical notation to use to represent your variables and parameters.
 
 ## During the Exam

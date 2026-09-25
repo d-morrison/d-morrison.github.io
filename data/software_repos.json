@@ -143,14 +143,14 @@
     ],
     "quarto_books_templates": [
       {
-        "github": "d-morrison/rme",
+        "github": "Morrison-Lab/rme",
         "description": "*Regression Models for Epidemiology* — an open Quarto textbook",
         "merged_prs": 340,
         "open_prs": 5,
         "main_commits": null
       },
       {
-        "github": "d-morrison/qwt",
+        "github": "Morrison-Lab/qwt",
         "description": "Template for building websites with Quarto",
         "merged_prs": 35,
         "open_prs": 3,
