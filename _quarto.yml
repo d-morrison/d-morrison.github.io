@@ -8,6 +8,8 @@ project:
     - "!archetypes/"
     - "!config/"
     - "!data/"
+    # Retired page, kept in the repo for reference
+    - "!gge-qe.qmd"
 
 website:
   title: "Douglas Ezra Morrison"
@@ -32,8 +34,6 @@ website:
         href: teaching.qmd
       - text: "CV"
         href: files/CV/Morrison_CV.pdf
-      - text: "GGE QE"
-        href: gge-qe.qmd
     right:
       - icon: github
         href: https://github.com/d-morrison
