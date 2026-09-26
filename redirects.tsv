@@ -1,0 +1,18 @@
+# Project sites that used to be served from d-morrison.github.io/<path>/
+# but moved when their repos were transferred to another owner.
+# GitHub redirects the repo URLs, but not the GitHub Pages URLs, so
+# build.sh turns each line into a redirect page, and 404.qmd forwards
+# deep links (e.g. /rme/estimation.html#def-estimand) to the same page
+# on the new site.
+#
+# Format: <old path><TAB><new base URL>
+rme	https://morrison-lab.github.io/rme/
+cie	https://morrison-lab.github.io/cie/
+psw	https://morrison-lab.github.io/psw/
+qbt	https://morrison-lab.github.io/qbt/
+qwt	https://morrison-lab.github.io/qwt/
+qmt	https://morrison-lab.github.io/qmt/
+rpt	https://morrison-lab.github.io/rpt/
+wai	https://morrison-lab.github.io/wai/
+gha	https://morrison-lab.github.io/gha/
+ai-config	https://morrison-lab.github.io/ai-config/

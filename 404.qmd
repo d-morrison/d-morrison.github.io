@@ -1,0 +1,13 @@
+---
+title: "Page not found"
+toc: false
+include-in-header:
+  text: |
+    <script src="/redirects.js"></script>
+---
+
+Sorry, that page doesn't exist.
+
+Some projects that used to live on this site have moved to
+[Morrison Lab](https://github.com/Morrison-Lab); if you followed an old link,
+try searching there, or head back to the [home page](/).
